@@ -1,0 +1,144 @@
+{
+  "method": "link_down_up_poll",
+  "interface_failed": "s1-eth1",
+  "switch": "s1",
+  "probe_src": "h1",
+  "probe_dst": "10.0.0.6",
+  "iterations": 30,
+  "failure_convergence": {
+    "mean_ms": 179.4762,
+    "min_ms": 139.8952,
+    "max_ms": 222.5149,
+    "stdev_ms": 16.7369,
+    "successful_runs": 30
+  },
+  "recovery_convergence": {
+    "mean_ms": 187.4496,
+    "min_ms": 91.9855,
+    "max_ms": 316.443,
+    "stdev_ms": 32.7392,
+    "successful_runs": 30
+  },
+  "raw_results_ms": [
+    {
+      "failure_ms": 174.2413,
+      "recovery_ms": 220.3734
+    },
+    {
+      "failure_ms": 188.6904,
+      "recovery_ms": 192.184
+    },
+    {
+      "failure_ms": 179.0342,
+      "recovery_ms": 183.5814
+    },
+    {
+      "failure_ms": 173.3942,
+      "recovery_ms": 163.8544
+    },
+    {
+      "failure_ms": 177.7713,
+      "recovery_ms": 175.7429
+    },
+    {
+      "failure_ms": 183.6245,
+      "recovery_ms": 199.6982
+    },
+    {
+      "failure_ms": 189.4629,
+      "recovery_ms": 185.1003
+    },
+    {
+      "failure_ms": 179.1523,
+      "recovery_ms": 184.7718
+    },
+    {
+      "failure_ms": 222.5149,
+      "recovery_ms": 194.7827
+    },
+    {
+      "failure_ms": 191.6082,
+      "recovery_ms": 189.3642
+    },
+    {
+      "failure_ms": 172.6568,
+      "recovery_ms": 181.6208
+    },
+    {
+      "failure_ms": 164.9725,
+      "recovery_ms": 183.9802
+    },
+    {
+      "failure_ms": 190.2862,
+      "recovery_ms": 207.6001
+    },
+    {
+      "failure_ms": 170.79,
+      "recovery_ms": 177.2234
+    },
+    {
+      "failure_ms": 202.363,
+      "recovery_ms": 187.7651
+    },
+    {
+      "failure_ms": 163.765,
+      "recovery_ms": 168.3497
+    },
+    {
+      "failure_ms": 139.8952,
+      "recovery_ms": 91.9855
+    },
+    {
+      "failure_ms": 197.4652,
+      "recovery_ms": 179.3852
+    },
+    {
+      "failure_ms": 157.8822,
+      "recovery_ms": 195.0989
+    },
+    {
+      "failure_ms": 189.6272,
+      "recovery_ms": 171.5622
+    },
+    {
+      "failure_ms": 155.5181,
+      "recovery_ms": 171.3665
+    },
+    {
+      "failure_ms": 168.699,
+      "recovery_ms": 196.0666
+    },
+    {
+      "failure_ms": 184.2062,
+      "recovery_ms": 196.691
+    },
+    {
+      "failure_ms": 190.5305,
+      "recovery_ms": 171.9127
+    },
+    {
+      "failure_ms": 182.0107,
+      "recovery_ms": 316.443
+    },
+    {
+      "failure_ms": 154.8562,
+      "recovery_ms": 177.3088
+    },
+    {
+      "failure_ms": 205.0295,
+      "recovery_ms": 181.7875
+    },
+    {
+      "failure_ms": 173.1162,
+      "recovery_ms": 208.4792
+    },
+    {
+      "failure_ms": 184.5682,
+      "recovery_ms": 165.3864
+    },
+    {
+      "failure_ms": 176.5535,
+      "recovery_ms": 204.0215
+    }
+  ]
+}

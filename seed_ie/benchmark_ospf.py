@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-OSPF benchmark script aligned with the Mininet benchmark structure.
+OSPF benchmark script formatted to mirror the Mininet benchmark CSV/JSON structure.
 
-Fixes applied:
-- corrected SEED Docker container names
-- corrected router destination IPs
-- fixed ping summary parsing for values ending in " ms"
-- added command-line arguments for test runs
+Key alignment points:
+- steady-state CSV columns follow the same pattern as the Mininet benchmark
+- convergence CSV contains: iteration, failure_ms, recovery_ms
+- latency pairs: R1-R2, R1-R4, R1-R6
+- bandwidth pairs: R1-R2, R1-R4
+- packet-loss pairs: R1-R2, R1-R4, R1-R6
 """
 
 import argparse
@@ -19,8 +20,8 @@ import subprocess
 import time
 from typing import Dict, List, Optional
 
-DEFAULT_ITERATIONS = 1000
-CONVERGENCE_ITERATIONS = 30
+DEFAULT_ITERATIONS = 10
+CONVERGENCE_ITERATIONS = 5
 DEFAULT_PAUSE_BETWEEN_RUNS = 2.0
 CMD_TIMEOUT = 90
 
@@ -36,35 +37,38 @@ CONV_JSON = "ospf_benchmark_results_iterative_ms_convergence.json"
 LATENCY_PAIRS = [
     {
         "name": "R1-R2",
+        "key": "r1_r2",
         "hops": 1,
-        "src_container": "r-r1-10.0.12.254",
-        "dst_container": "r-r2-10.0.12.253",
+        "src_container": "as100r-r1-10.0.12.254",
+        "dst_container": "as100r-r2-10.0.12.253",
         "dst_ip": "10.0.12.253",
     },
     {
         "name": "R1-R4",
+        "key": "r1_r4",
         "hops": 3,
-        "src_container": "r-r1-10.0.12.254",
-        "dst_container": "r-r4-10.0.34.253",
+        "src_container": "as100r-r1-10.0.12.254",
+        "dst_container": "as100r-r4-10.0.34.253",
         "dst_ip": "10.0.34.253",
     },
     {
         "name": "R1-R6",
+        "key": "r1_r6",
         "hops": 1,
-        "src_container": "r-r1-10.0.12.254",
-        "dst_container": "r-r6-10.0.56.253",
+        "src_container": "as100r-r1-10.0.12.254",
+        "dst_container": "as100r-r6-10.0.56.253",
         "dst_ip": "10.0.56.253",
     },
 ]
 
 BW_TPUT_PAIRS = [
-    LATENCY_PAIRS[0],
-    LATENCY_PAIRS[1],
+    LATENCY_PAIRS[0],  # R1-R2
+    LATENCY_PAIRS[1],  # R1-R4
 ]
 
 LOSS_PAIRS = LATENCY_PAIRS[:]
 
-CONVERGENCE_CONTAINER = "r-r3-10.0.23.253"
+CONVERGENCE_CONTAINER = "as100r-r3-10.0.23.253"
 CONVERGENCE_DST_IP = "10.0.56.253"
 FAIL_LINK_CMD_DOWN = "ip link set dev net34 down"
 FAIL_LINK_CMD_UP = "ip link set dev net34 up"
@@ -88,11 +92,6 @@ def run_cmd(cmd: str, timeout: int = CMD_TIMEOUT) -> str:
 def docker_exec(container: str, command: str, timeout: int = CMD_TIMEOUT) -> str:
     safe_command = command.replace('"', '\\"')
     return run_cmd(f'docker exec {container} sh -lc "{safe_command}"', timeout=timeout)
-
-
-def flatten_metric_key(prefix: str, pair_name: str, suffix: str) -> str:
-    clean = pair_name.lower().replace("-", "_")
-    return f"{prefix}_{clean}_{suffix}"
 
 
 def _read_cpu_times() -> Dict[str, int]:
@@ -144,32 +143,27 @@ def measure_memory_utilisation() -> Dict[str, float]:
             meminfo[key.strip()] = int(value.strip().split()[0])
 
     total_kb = meminfo.get("MemTotal", 0)
-    free_kb = meminfo.get("MemFree", 0)
-    available_kb = meminfo.get("MemAvailable", free_kb)
-    buffers_kb = meminfo.get("Buffers", 0)
-    cached_kb = meminfo.get("Cached", 0)
-
+    available_kb = meminfo.get("MemAvailable", 0)
     used_kb = max(total_kb - available_kb, 0)
     util_pct = (100.0 * used_kb / total_kb) if total_kb else 0.0
 
     return {
-        "mem_total_mb": round(total_kb / 1024.0, 3),
         "mem_used_mb": round(used_kb / 1024.0, 3),
-        "mem_free_mb": round(free_kb / 1024.0, 3),
-        "mem_available_mb": round(available_kb / 1024.0, 3),
-        "mem_buffers_mb": round(buffers_kb / 1024.0, 3),
-        "mem_cached_mb": round(cached_kb / 1024.0, 3),
+        "mem_total_mb": round(total_kb / 1024.0, 3),
         "mem_utilisation_pct": round(util_pct, 3),
     }
 
 
 def parse_ping_output(output: str) -> Optional[Dict[str, float]]:
     lines = output.splitlines()
-    stats_line = next((l for l in lines if "min/avg/max" in l or "min/avg/max/mdev" in l), None)
+    stats_line = next((l for l in lines if "min/avg/max" in l), None)
     if not stats_line:
         return None
 
-    stats_match = re.search(r'=\s*([\d.]+)\s*/\s*([\d.]+)\s*/\s*([\d.]+)\s*/\s*([\d.]+)', stats_line)
+    stats_match = re.search(
+        r'=\s*([\d.]+)\s*/\s*([\d.]+)\s*/\s*([\d.]+)\s*/\s*([\d.]+)',
+        stats_line
+    )
     if not stats_match:
         raise RuntimeError(f"Could not parse ping summary line: {stats_line}")
 
@@ -182,7 +176,7 @@ def parse_ping_output(output: str) -> Optional[Dict[str, float]]:
             samples.append(float(match.group(1)))
 
     loss_match = re.search(r"(\d+(?:\.\d+)?)% packet loss", output)
-    txrx_match = re.search(r"(\d+)\s+packets transmitted,\s+(\d+)\s+received", output)
+    txrx_match = re.search(r"(\d+)\s+packets transmitted,\s+(\d+)\s+(?:packets )?received", output)
 
     packet_loss_pct = float(loss_match.group(1)) if loss_match else None
     packets_transmitted = int(txrx_match.group(1)) if txrx_match else None
@@ -197,7 +191,7 @@ def parse_ping_output(output: str) -> Optional[Dict[str, float]]:
         "latency_std_ms": stddev,
         "latency_median_ms": median_rtt,
         "jitter_ms": jitter,
-        "packet_loss_pct": packet_loss_pct,
+        "latency_loss_pct": packet_loss_pct,
         "packets_transmitted": packets_transmitted,
         "packets_received": packets_received,
         "sample_count": len(samples),
@@ -235,9 +229,7 @@ def run_iperf_metrics(src_container: str, dst_container: str, dst_ip: str, durat
 
         return {
             "bandwidth_mbps": round(bandwidth_bps / 1_000_000.0, 6),
-            "bandwidth_bps": round(bandwidth_bps, 3),
             "throughput_mbps": round(throughput_bps / 1_000_000.0, 6),
-            "throughput_bps": round(throughput_bps, 3),
             "retransmits": retransmits,
         }
     finally:
@@ -262,75 +254,120 @@ def compute_numeric_summary(values: List[float]) -> Dict[str, Optional[float]]:
     }
 
 
+def build_empty_row(iteration: int, started_at: str) -> Dict[str, Optional[float]]:
+    row = {
+        "iteration": iteration,
+        "started_at": started_at,
+        "completed_at": None,
+        "duration_ms": None,
+    }
+
+    for pair in LATENCY_PAIRS:
+        k = pair["key"]
+        row[f"latency_{k}_hops"] = pair["hops"]
+        row[f"latency_{k}_min_ms"] = None
+        row[f"latency_{k}_avg_ms"] = None
+        row[f"latency_{k}_max_ms"] = None
+        row[f"latency_{k}_std_ms"] = None
+        row[f"latency_{k}_median_ms"] = None
+        row[f"jitter_{k}_ms"] = None
+        row[f"latency_{k}_loss_pct"] = None
+
+    for pair in BW_TPUT_PAIRS:
+        k = pair["key"]
+        row[f"bandwidth_{k}_mbps"] = None
+        row[f"throughput_{k}_mbps"] = None
+        row[f"retransmits_{k}"] = None
+
+    for pair in LOSS_PAIRS:
+        k = pair["key"]
+        row[f"packetloss_{k}_pct"] = None
+
+    row["cpu_total_busy_pct"] = None
+    row["cpu_user_pct"] = None
+    row["cpu_system_pct"] = None
+    row["cpu_sample_window_ms"] = None
+    row["mem_used_mb"] = None
+    row["mem_total_mb"] = None
+    row["mem_utilisation_pct"] = None
+    return row
+
+
 def run_steady_state_benchmark(iterations: int = DEFAULT_ITERATIONS, pause_s: float = DEFAULT_PAUSE_BETWEEN_RUNS, output_file: str = DEFAULT_RESULTS_FILE) -> None:
     raw_runs = []
     csv_rows = []
 
     for i in range(1, iterations + 1):
+        started_at = datetime.datetime.now().isoformat()
         print(f"Steady-state iteration {i}/{iterations}")
         iteration_start = time.time()
 
         run_record = {
             "iteration": i,
-            "started_at": datetime.datetime.now().isoformat(),
+            "started_at": started_at,
+            "completed_at": None,
             "latency_jitter": {},
             "bandwidth_throughput": {},
             "packet_loss": {},
         }
-        csv_row = {"iteration": i, "started_at": run_record["started_at"]}
+        csv_row = build_empty_row(i, started_at)
 
         for pair in LATENCY_PAIRS:
             try:
                 res = run_ping_metrics(pair["src_container"], pair["dst_ip"], count=PING_COUNT, interval=PING_INTERVAL)
                 res["hops"] = pair["hops"]
                 run_record["latency_jitter"][pair["name"]] = res
-                csv_row[flatten_metric_key("latency", pair["name"], "hops")] = pair["hops"]
-                for key in ("latency_min_ms", "latency_avg_ms", "latency_max_ms", "latency_std_ms", "latency_median_ms", "jitter_ms"):
-                    csv_row[flatten_metric_key("latency", pair["name"], key)] = res.get(key)
+                k = pair["key"]
+                csv_row[f"latency_{k}_min_ms"] = res.get("latency_min_ms")
+                csv_row[f"latency_{k}_avg_ms"] = res.get("latency_avg_ms")
+                csv_row[f"latency_{k}_max_ms"] = res.get("latency_max_ms")
+                csv_row[f"latency_{k}_std_ms"] = res.get("latency_std_ms")
+                csv_row[f"latency_{k}_median_ms"] = res.get("latency_median_ms")
+                csv_row[f"jitter_{k}_ms"] = res.get("jitter_ms")
+                csv_row[f"latency_{k}_loss_pct"] = res.get("latency_loss_pct")
             except Exception as e:
                 run_record["latency_jitter"][pair["name"]] = {"error": str(e), "hops": pair["hops"]}
-                csv_row[flatten_metric_key("latency", pair["name"], "error")] = str(e)
 
         for pair in BW_TPUT_PAIRS:
             try:
                 res = run_iperf_metrics(pair["src_container"], pair["dst_container"], pair["dst_ip"], duration=IPERF_DURATION)
                 res["hops"] = pair["hops"]
                 run_record["bandwidth_throughput"][pair["name"]] = res
-                csv_row[flatten_metric_key("bw", pair["name"], "hops")] = pair["hops"]
-                for key in ("bandwidth_mbps", "bandwidth_bps", "throughput_mbps", "throughput_bps", "retransmits"):
-                    csv_row[flatten_metric_key("bw", pair["name"], key)] = res.get(key)
+                k = pair["key"]
+                csv_row[f"bandwidth_{k}_mbps"] = res.get("bandwidth_mbps")
+                csv_row[f"throughput_{k}_mbps"] = res.get("throughput_mbps")
+                csv_row[f"retransmits_{k}"] = res.get("retransmits")
             except Exception as e:
                 run_record["bandwidth_throughput"][pair["name"]] = {"error": str(e), "hops": pair["hops"]}
-                csv_row[flatten_metric_key("bw", pair["name"], "error")] = str(e)
 
         for pair in LOSS_PAIRS:
             try:
                 res = run_ping_metrics(pair["src_container"], pair["dst_ip"], count=PACKET_LOSS_COUNT, interval=PING_INTERVAL)
                 loss_record = {
                     "hops": pair["hops"],
-                    "packet_loss_pct": res.get("packet_loss_pct"),
+                    "packet_loss_pct": res.get("latency_loss_pct"),
                     "packets_transmitted": res.get("packets_transmitted"),
                     "packets_received": res.get("packets_received"),
                 }
                 run_record["packet_loss"][pair["name"]] = loss_record
-                csv_row[flatten_metric_key("loss", pair["name"], "hops")] = pair["hops"]
-                for key in ("packet_loss_pct", "packets_transmitted", "packets_received"):
-                    csv_row[flatten_metric_key("loss", pair["name"], key)] = loss_record.get(key)
+                csv_row[f"packetloss_{pair['key']}_pct"] = loss_record.get("packet_loss_pct")
             except Exception as e:
                 run_record["packet_loss"][pair["name"]] = {"error": str(e), "hops": pair["hops"]}
-                csv_row[flatten_metric_key("loss", pair["name"], "error")] = str(e)
 
         cpu_stats = measure_cpu_utilisation(duration_s=2.0)
         mem_stats = measure_memory_utilisation()
+        completed_at = datetime.datetime.now().isoformat()
         duration_ms = round((time.time() - iteration_start) * 1000.0, 3)
 
         run_record["cpu_utilisation"] = cpu_stats
         run_record["memory_utilisation"] = mem_stats
         run_record["duration_ms"] = duration_ms
+        run_record["completed_at"] = completed_at
 
+        csv_row["completed_at"] = completed_at
+        csv_row["duration_ms"] = duration_ms
         csv_row.update(cpu_stats)
         csv_row.update(mem_stats)
-        csv_row["duration_ms"] = duration_ms
 
         raw_runs.append(run_record)
         csv_rows.append(csv_row)
@@ -358,6 +395,7 @@ def run_steady_state_benchmark(iterations: int = DEFAULT_ITERATIONS, pause_s: fl
             "latency_std_ms": compute_numeric_summary([x.get("latency_std_ms") for x in pair_runs]),
             "latency_median_ms": compute_numeric_summary([x.get("latency_median_ms") for x in pair_runs]),
             "jitter_ms": compute_numeric_summary([x.get("jitter_ms") for x in pair_runs]),
+            "latency_loss_pct": compute_numeric_summary([x.get("latency_loss_pct") for x in pair_runs]),
         }
 
     for pair in BW_TPUT_PAIRS:
@@ -391,8 +429,9 @@ def run_steady_state_benchmark(iterations: int = DEFAULT_ITERATIONS, pause_s: fl
 
     if csv_rows:
         csv_file = output_file.replace(".json", ".csv")
+        fieldnames = list(csv_rows[0].keys())
         with open(csv_file, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=list(csv_rows[0].keys()))
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(csv_rows)
 
@@ -433,18 +472,15 @@ def run_convergence_tests(iterations: int = CONVERGENCE_ITERATIONS) -> None:
     for i in range(1, iterations + 1):
         print(f"Convergence iteration {i}/{iterations}")
         result = measure_convergence_once(CONVERGENCE_CONTAINER, CONVERGENCE_DST_IP)
-        cpu_stats = measure_cpu_utilisation(duration_s=2.0)
-        mem_stats = measure_memory_utilisation()
-
-        row = {"iteration": i}
-        row.update(result)
-        row.update(cpu_stats)
-        row.update(mem_stats)
-        rows.append(row)
+        rows.append({
+            "iteration": i,
+            "failure_ms": result.get("failure_ms"),
+            "recovery_ms": result.get("recovery_ms"),
+        })
 
     if rows:
         with open(CONV_CSV, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+            writer = csv.DictWriter(f, fieldnames=["iteration", "failure_ms", "recovery_ms"])
             writer.writeheader()
             writer.writerows(rows)
 
@@ -457,8 +493,6 @@ def run_convergence_tests(iterations: int = CONVERGENCE_ITERATIONS) -> None:
                     "summary": {
                         "failure_ms": compute_numeric_summary([r.get("failure_ms") for r in rows]),
                         "recovery_ms": compute_numeric_summary([r.get("recovery_ms") for r in rows]),
-                        "cpu_total_busy_pct": compute_numeric_summary([r.get("cpu_total_busy_pct") for r in rows]),
-                        "mem_utilisation_pct": compute_numeric_summary([r.get("mem_utilisation_pct") for r in rows]),
                     },
                 },
                 f,
