@@ -26,7 +26,7 @@ from statistics import mean, median, stdev
 HOSTS = {
     "h1": "10.0.0.1",
     "h2": "10.0.0.2",
-    "h3": "10.0.0.3",
+    "h4": "10.0.0.3",
     "h4": "10.0.0.4",
     "h5": "10.0.0.5",
     "h6": "10.0.0.6",
@@ -45,9 +45,9 @@ CMD_TIMEOUT = 90
 # Expanded to mirror expanded path route coverage more closely.
 LATENCY_PAIRS = [
     ("h1", "h2"),
-    ("h1", "h3"),
-    ("h3", "h2"),
-    ("h3", "h6"),
+    ("h1", "h4"),
+    ("h4", "h2"),
+    ("h4", "h6"),
     ("h1", "h6"),
     ("h2", "h5"),
     ("h4", "h5"),
@@ -60,9 +60,9 @@ LOSS_PAIRS = LATENCY_PAIRS[:]
 # Shortest-path hop counts for the 6-node ring.
 HOP_COUNTS = {
     "h1_to_h2": 1,
-    "h1_to_h3": 2,
-    "h3_to_h2": 1,
-    "h3_to_h6": 2,
+    "h1_to_h4": 2,
+    "h4_to_h2": 1,
+    "h4_to_h6": 2,
     "h1_to_h6": 1,
     "h2_to_h5": 2,
     "h4_to_h5": 1,

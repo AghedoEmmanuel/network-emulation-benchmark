@@ -108,7 +108,7 @@ def run_ping_tests(hosts):
     h1 = hosts[0]
     targets = [
         ('h2', '10.0.0.2'),
-        ('h3', '10.0.0.3'),
+        ('h4', '10.0.0.3'),
         ('h4', '10.0.0.4'),
         ('h5', '10.0.0.5'),
         ('h6', '10.0.0.6'),
@@ -162,7 +162,7 @@ def main():
     info('*** Creating client hosts (h1-h6)\n')
     h1 = net.addHost('h1', ip='10.0.0.1/24')
     h2 = net.addHost('h2', ip='10.0.0.2/24')
-    h3 = net.addHost('h3', ip='10.0.0.3/24')
+    h4 = net.addHost('h4', ip='10.0.0.3/24')
     h4 = net.addHost('h4', ip='10.0.0.4/24')
     h5 = net.addHost('h5', ip='10.0.0.5/24')
     h6 = net.addHost('h6', ip='10.0.0.6/24')
@@ -178,7 +178,7 @@ def main():
     info('*** Connecting hosts to switches\n')
     net.addLink(h1, net1, port2=3,  bw=100, delay='1ms')
     net.addLink(h2, net2, port2=3,  bw=100, delay='1ms')
-    net.addLink(h3, net3, port2=3,  bw=100, delay='1ms')
+    net.addLink(h4, net3, port2=3,  bw=100, delay='1ms')
     net.addLink(h4, net4, port2=3,  bw=100, delay='1ms')
     net.addLink(h5, net5, port2=3,  bw=100, delay='1ms')
     net.addLink(h6, net6, port2=3,  bw=100, delay='1ms')
@@ -187,7 +187,7 @@ def main():
     net.start()
 
     # Disable IPv6 to reduce noise
-    for h in [h1, h2, h3, h4, h5, h6]:
+    for h in [h1, h2, h4, h4, h5, h6]:
         h.cmd('sysctl -w net.ipv6.conf.all.disable_ipv6=1 2>/dev/null')
 
     info('*** Configuring OVS switches for OpenFlow 1.3 + POX\n')
@@ -213,10 +213,10 @@ def main():
     export_topology_dot(net)
 
     info('\n*** Host interface summary:\n')
-    for h in [h1, h2, h3, h4, h5, h6]:
+    for h in [h1, h2, h4, h4, h5, h6]:
         info(f'    {h.name}: {h.cmd("ip -br addr").strip()}\n')
 
-    run_ping_tests([h1, h2, h3, h4, h5, h6])
+    run_ping_tests([h1, h2, h4, h4, h5, h6])
 
     info('\n*** Flow tables installed by POX on net1:\n')
     info(net1.cmd('ovs-ofctl -O OpenFlow10 dump-flows net1') + '\n')

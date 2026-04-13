@@ -21,7 +21,7 @@ NUM_SWITCHES = 6
 
 PORT_RING_CW  = 1   # eth1: clockwise ring port
 PORT_RING_CCW = 2   # eth2: anticlockwise ring port
-PORT_HOST     = 3   # eth3: host-facing port
+PORT_HOST     = 3   # eth4: host-facing port
 
 def host_mac(n):
     return EthAddr('00:00:00:00:00:0%d' % n)
