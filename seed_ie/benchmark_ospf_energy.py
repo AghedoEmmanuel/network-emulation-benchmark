@@ -2,14 +2,14 @@
 """
 OSPF benchmark script formatted to mirror the Mininet benchmark CSV/JSON structure.
 
-Key alignment points:
-- steady-state CSV columns follow the same pattern as the Mininet benchmark
-- convergence CSV contains: iteration, failure_ms, recovery_ms
-- latency pairs: R1-R2, R1-R4, R1-R6
-- bandwidth pairs: R1-R2, R1-R4
-- packet-loss pairs: R1-R2, R1-R4, R1-R6
+Aligned for the current SEED IE setup:
+- uses real SEED container names
+- uses sudo for docker exec
+- adds ping timeout to avoid hanging
+- fixes output filename handling
+- keeps steady-state + convergence testing
+- works with BIRD-based OSPF runtime
 """
-
 
 import argparse
 import csv
@@ -31,8 +31,10 @@ PING_INTERVAL = 0.1
 PACKET_LOSS_COUNT = 200
 IPERF_DURATION = 10
 
+ENERGY_IDLE_W = 20.0
+ENERGY_MAX_W = 60.0
+
 DEFAULT_RESULTS_FILE = "ospf_benchmark_results_iterative_ms.json"
-# DEFAULT_RESULTS_FILE = "ospf_benchmark_results_iterative_ms.csv"
 CONV_CSV = "ospf_benchmark_results_iterative_ms_convergence.csv"
 CONV_JSON = "ospf_benchmark_results_iterative_ms_convergence.json"
 
@@ -75,7 +77,7 @@ LATENCY_PAIRS = [
         "hops": 1,
         "src_container": "as100r-r1-10.0.12.254",
         "dst_container": "as100r-r6-10.0.56.253",
-        "dst_ip": "10.0.61.1",
+        "dst_ip": "10.0.61.253",
     },
     {
         "name": "R2-R5",
@@ -107,13 +109,11 @@ LATENCY_PAIRS = [
         "hops": 1,
         "src_container": "as100r-r6-10.0.56.253",
         "dst_container": "as100r-r1-10.0.12.254",
-        "dst_ip": "10.0.61.2",
+        "dst_ip": "10.0.61.254",
     },
 ]
 
-BW_TPUT_PAIRS = LATENCY_PAIRS[:]  # R1-R2
-
-
+BW_TPUT_PAIRS = LATENCY_PAIRS[:]
 LOSS_PAIRS = LATENCY_PAIRS[:]
 
 CONVERGENCE_CONTAINER = "as100r-r3-10.0.23.253"
@@ -139,7 +139,7 @@ def run_cmd(cmd: str, timeout: int = CMD_TIMEOUT) -> str:
 
 def docker_exec(container: str, command: str, timeout: int = CMD_TIMEOUT) -> str:
     safe_command = command.replace('"', '\\"')
-    return run_cmd(f'docker exec {container} sh -lc "{safe_command}"', timeout=timeout)
+    return run_cmd(f'sudo docker exec {container} sh -lc "{safe_command}"', timeout=timeout)
 
 
 def _read_cpu_times() -> Dict[str, int]:
@@ -202,16 +202,23 @@ def measure_memory_utilisation() -> Dict[str, float]:
     }
 
 
+def estimate_energy_utilisation(cpu_busy_pct: float, duration_ms: float, idle_w: float = ENERGY_IDLE_W, max_w: float = ENERGY_MAX_W) -> Dict[str, float]:
+    cpu_fraction = max(0.0, min(cpu_busy_pct / 100.0, 1.0))
+    estimated_power_w = idle_w + (max_w - idle_w) * cpu_fraction
+    estimated_energy_kwh = (estimated_power_w * (duration_ms / 1000.0 / 3600.0)) / 1000.0
+    return {
+        "estimated_power_w": round(estimated_power_w, 3),
+        "estimated_energy_kwh": round(estimated_energy_kwh, 8),
+    }
+
+
 def parse_ping_output(output: str) -> Optional[Dict[str, float]]:
     lines = output.splitlines()
     stats_line = next((l for l in lines if "min/avg/max" in l), None)
     if not stats_line:
         return None
 
-    stats_match = re.search(
-        r'=\s*([\d.]+)\s*/\s*([\d.]+)\s*/\s*([\d.]+)\s*/\s*([\d.]+)',
-        stats_line
-    )
+    stats_match = re.search(r'=\s*([\d.]+)\s*/\s*([\d.]+)\s*/\s*([\d.]+)\s*/\s*([\d.]+)', stats_line)
     if not stats_match:
         raise RuntimeError(f"Could not parse ping summary line: {stats_line}")
 
@@ -247,7 +254,11 @@ def parse_ping_output(output: str) -> Optional[Dict[str, float]]:
 
 
 def run_ping_metrics(src_container: str, dst_ip: str, count: int, interval: float, timeout: int = CMD_TIMEOUT) -> Dict[str, float]:
-    output = docker_exec(src_container, f"ping -c {count} -i {interval} {dst_ip}", timeout=timeout)
+    output = docker_exec(
+        src_container,
+        f"ping -c {count} -i {interval} -W 1 {dst_ip}",
+        timeout=timeout,
+    )
     parsed = parse_ping_output(output)
     if not parsed:
         raise RuntimeError(f"Could not parse ping output for {src_container} -> {dst_ip}")
@@ -338,6 +349,8 @@ def build_empty_row(iteration: int, started_at: str) -> Dict[str, Optional[float
     row["mem_used_mb"] = None
     row["mem_total_mb"] = None
     row["mem_utilisation_pct"] = None
+    row["estimated_power_w"] = None
+    row["estimated_energy_kwh"] = None
     return row
 
 
@@ -348,7 +361,7 @@ def run_steady_state_benchmark(iterations: int = DEFAULT_ITERATIONS, pause_s: fl
     for i in range(1, iterations + 1):
         started_at = datetime.datetime.now().isoformat()
         print(f"Steady-state iteration {i}/{iterations}")
-        iteration_start = time.time()
+        iteration_start = time.perf_counter()
 
         run_record = {
             "iteration": i,
@@ -405,10 +418,12 @@ def run_steady_state_benchmark(iterations: int = DEFAULT_ITERATIONS, pause_s: fl
         cpu_stats = measure_cpu_utilisation(duration_s=2.0)
         mem_stats = measure_memory_utilisation()
         completed_at = datetime.datetime.now().isoformat()
-        duration_ms = round((time.time() - iteration_start) * 1000.0, 3)
+        duration_ms = round((time.perf_counter() - iteration_start) * 1000.0, 3)
+        energy_stats = estimate_energy_utilisation(cpu_stats.get("cpu_total_busy_pct", 0.0), duration_ms)
 
         run_record["cpu_utilisation"] = cpu_stats
         run_record["memory_utilisation"] = mem_stats
+        run_record["energy_estimation"] = energy_stats
         run_record["duration_ms"] = duration_ms
         run_record["completed_at"] = completed_at
 
@@ -416,6 +431,7 @@ def run_steady_state_benchmark(iterations: int = DEFAULT_ITERATIONS, pause_s: fl
         csv_row["duration_ms"] = duration_ms
         csv_row.update(cpu_stats)
         csv_row.update(mem_stats)
+        csv_row.update(energy_stats)
 
         raw_runs.append(run_record)
         csv_rows.append(csv_row)
@@ -429,6 +445,8 @@ def run_steady_state_benchmark(iterations: int = DEFAULT_ITERATIONS, pause_s: fl
         "packet_loss": {},
         "cpu_total_busy_pct": compute_numeric_summary([r["cpu_utilisation"].get("cpu_total_busy_pct") for r in raw_runs]),
         "mem_utilisation_pct": compute_numeric_summary([r["memory_utilisation"].get("mem_utilisation_pct") for r in raw_runs]),
+        "estimated_power_w": compute_numeric_summary([r["energy_estimation"].get("estimated_power_w") for r in raw_runs]),
+        "estimated_energy_kwh": compute_numeric_summary([r["energy_estimation"].get("estimated_energy_kwh") for r in raw_runs]),
         "duration_ms": compute_numeric_summary([r.get("duration_ms") for r in raw_runs]),
     }
 
@@ -475,8 +493,8 @@ def run_steady_state_benchmark(iterations: int = DEFAULT_ITERATIONS, pause_s: fl
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(json_payload, f, indent=2)
 
+    csv_file = output_file.replace(".json", ".csv")
     if csv_rows:
-        csv_file = output_file.replace(".json", ".csv")
         fieldnames = list(csv_rows[0].keys())
         with open(csv_file, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -484,30 +502,30 @@ def run_steady_state_benchmark(iterations: int = DEFAULT_ITERATIONS, pause_s: fl
             writer.writerows(csv_rows)
 
     print(f"Steady-state JSON saved to {output_file}")
-    print(f"Steady-state CSV saved to {output_file.replace('.json', '.csv')}")
+    print(f"Steady-state CSV saved to {csv_file}")
 
 
 def measure_convergence_once(container: str, dst_ip: str) -> Dict[str, Optional[float]]:
     docker_exec(container, FAIL_LINK_CMD_DOWN)
-    start = time.time()
+    start = time.perf_counter()
 
     failure_ms = None
-    while (time.time() - start) <= CONVERGENCE_TIMEOUT:
+    while (time.perf_counter() - start) <= CONVERGENCE_TIMEOUT:
         try:
             docker_exec(container, f"ping -c 1 -W 1 {dst_ip}", timeout=5)
-            failure_ms = round((time.time() - start) * 1000.0, 3)
+            failure_ms = round((time.perf_counter() - start) * 1000.0, 3)
             break
         except Exception:
             pass
 
     docker_exec(container, FAIL_LINK_CMD_UP)
-    start = time.time()
+    start = time.perf_counter()
 
     recovery_ms = None
-    while (time.time() - start) <= CONVERGENCE_TIMEOUT:
+    while (time.perf_counter() - start) <= CONVERGENCE_TIMEOUT:
         try:
             docker_exec(container, f"ping -c 1 -W 1 {dst_ip}", timeout=5)
-            recovery_ms = round((time.time() - start) * 1000.0, 3)
+            recovery_ms = round((time.perf_counter() - start) * 1000.0, 3)
             break
         except Exception:
             pass

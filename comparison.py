@@ -143,6 +143,7 @@ tput_rows = []
 for ospf_col, sdn_col, label in [
     ("throughput_r1_r2_mbps", "throughput_h1_h2_mbps", "1-hop pair"),
     ("throughput_r1_r4_mbps", "throughput_h1_h4_mbps", "3-hop pair"),
+    # ("throughput_r1_r6_mbps", "throughput_h1_h6_mbps", "Adjacent alt (1-hop)"),
 ]:
     o = stats(ospf[ospf_col])
     s = stats(sdn[sdn_col])
@@ -178,6 +179,7 @@ bw_rows = []
 for ospf_col, sdn_col, label in [
     ("bandwidth_r1_r2_mbps", "bandwidth_h1_h2_mbps", "1-hop pair"),
     ("bandwidth_r1_r4_mbps", "bandwidth_h1_h4_mbps", "3-hop pair"),
+    # ("bandwidth_r1_r6_mbps", "bandwidth_h1_h6_mbps", "Adjacent alt (1-hop)"),
 ]:
     o = stats(ospf[ospf_col])
     s = stats(sdn[sdn_col])
@@ -290,6 +292,7 @@ fig.suptitle("Figure 2: Throughput Comparison – Mininet (SDN) vs SEED IE (OSPF
 for ax, (oc, sc, title) in zip(axes, [
     ("throughput_r1_r2_mbps", "throughput_h1_h2_mbps", "1-hop pair"),
     ("throughput_r1_r4_mbps", "throughput_h1_h4_mbps", "3-hop pair"),
+    ("throughput_r1_r6_mbps", "throughput_h1_h6_mbps", "Adjacent alt (1-hop)"),
 ]):
     styled_box(ax,
                {"OSPF (SEED IE)": ospf[oc].dropna().values,
@@ -363,6 +366,7 @@ fig.suptitle("Figure 6: Bandwidth Comparison – Mininet (SDN) vs SEED IE (OSPF)
 for ax, (oc, sc, title) in zip(axes, [
     ("bandwidth_r1_r2_mbps", "bandwidth_h1_h2_mbps", "1-hop pair"),
     ("bandwidth_r1_r4_mbps", "bandwidth_h1_h4_mbps", "3-hop pair"),
+    ("bandwidth_r1_r6_mbps", "bandwidth_h1_h6_mbps", "Adjacent alt (1-hop)"),
 ]):
     styled_box(ax,
                {"OSPF (SEED IE)": ospf[oc].dropna().values,
