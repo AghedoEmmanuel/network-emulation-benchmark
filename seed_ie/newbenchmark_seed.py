@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-Focused latency/jitter + convergence benchmark.
+Focused raw latency + convergence benchmark for SEED IE.
 
-This version is designed for the lecturer's instruction to use Python's time module.
-It measures per-sample delay with time.perf_counter(), computes jitter as the mean
-absolute difference between consecutive measured delays, and saves both CSV and JSON.
+This version saves every raw latency sample. It does not calculate mean, min, max,
+median, stdev or jitter inside the benchmark. You can do those later in Excel or in a
+separate analysis script.
 
 Outputs:
-- steady-state latency/jitter CSV
-- steady-state latency/jitter JSON
-- convergence CSV
-- convergence JSON
+- seed_ie_raw_latency_time_results.csv
+- seed_ie_raw_latency_time_results.json
+- seed_ie_convergence_time_results.csv
+- seed_ie_convergence_time_results.json
 """
 
 import argparse
@@ -18,22 +18,21 @@ import csv
 import datetime
 import json
 import re
-import statistics
 import subprocess
 import time
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 DEFAULT_ITERATIONS = 10
 CONVERGENCE_ITERATIONS = 5
 DEFAULT_PAUSE_BETWEEN_RUNS = 2.0
 
-PING_COUNT = 100
-PING_INTERVAL = 0.1
+PING_COUNT = 50
+PING_INTERVAL = 0.01
 CMD_TIMEOUT = 90
 CONVERGENCE_TIMEOUT = 60.0
 
-LATENCY_JSON = "seed_ie_latency_jitter_time_results.json"
-LATENCY_CSV = "seed_ie_latency_jitter_time_results.csv"
+LATENCY_JSON = "seed_ie_raw_latency_time_results.json"
+LATENCY_CSV = "seed_ie_raw_latency_time_results.csv"
 CONV_JSON = "seed_ie_convergence_time_results.json"
 CONV_CSV = "seed_ie_convergence_time_results.csv"
 
@@ -84,122 +83,67 @@ def timed_single_ping(container: str, dst_ip: str) -> Dict[str, Optional[float]]
         output = docker_exec(container, f"ping -c 1 -W 1 {dst_ip}", timeout=5)
         elapsed_ms = (time.perf_counter() - start) * 1000.0
         parsed = parse_single_ping(output)
-        parsed["time_module_delay_ms"] = elapsed_ms
+        parsed["time_module_delay_ms"] = round(elapsed_ms, 6)
+        parsed["error"] = None
         return parsed
-    except Exception:
+    except Exception as exc:
         elapsed_ms = (time.perf_counter() - start) * 1000.0
         return {
             "ping_rtt_ms": None,
             "packet_loss_pct": 100.0,
             "success": False,
-            "time_module_delay_ms": elapsed_ms,
+            "time_module_delay_ms": round(elapsed_ms, 6),
+            "error": str(exc),
         }
 
 
-def compute_numeric_summary(values: List[Optional[float]]) -> Dict[str, Optional[float]]:
-    valid = [float(v) for v in values if v is not None]
-    if not valid:
-        return {"count": 0, "mean": None, "min": None, "max": None, "stdev": None, "median": None}
-    return {
-        "count": len(valid),
-        "mean": round(statistics.mean(valid), 6),
-        "min": round(min(valid), 6),
-        "max": round(max(valid), 6),
-        "stdev": round(statistics.stdev(valid), 6) if len(valid) > 1 else 0.0,
-        "median": round(statistics.median(valid), 6),
-    }
-
-
-def measure_latency_jitter_time(container: str, dst_ip: str, count: int = PING_COUNT, interval: float = PING_INTERVAL) -> Dict[str, Optional[float]]:
-    delays = []
-    ping_rtts = []
-    lost = 0
-
-    for i in range(count):
-        result = timed_single_ping(container, dst_ip)
-        if result["success"]:
-            delays.append(result["time_module_delay_ms"])
-            ping_rtts.append(result["ping_rtt_ms"])
-        else:
-            lost += 1
-        if i < count - 1 and interval > 0:
-            time.sleep(interval)
-
-    jitter_values = [abs(delays[i] - delays[i - 1]) for i in range(1, len(delays))]
-    return {
-        "samples_requested": count,
-        "samples_received": len(delays),
-        "packet_loss_pct": round((lost / count) * 100.0, 6) if count else None,
-        "latency_min_ms": round(min(delays), 6) if delays else None,
-        "latency_avg_ms": round(statistics.mean(delays), 6) if delays else None,
-        "latency_max_ms": round(max(delays), 6) if delays else None,
-        "latency_std_ms": round(statistics.stdev(delays), 6) if len(delays) > 1 else 0.0,
-        "latency_median_ms": round(statistics.median(delays), 6) if delays else None,
-        "jitter_ms": round(statistics.mean(jitter_values), 6) if jitter_values else None,
-        "ping_rtt_avg_ms": round(statistics.mean(ping_rtts), 6) if ping_rtts else None,
-    }
-
-
-def run_latency_jitter_tests(iterations: int, pause_s: float, latency_json: str, latency_csv: str) -> None:
+def run_raw_latency_tests(iterations: int, pause_s: float, latency_json: str, latency_csv: str, count: int, interval: float) -> None:
     rows = []
-    raw_runs = []
 
     for iteration in range(1, iterations + 1):
-        print(f"Latency/jitter iteration {iteration}/{iterations}")
-        started_at = datetime.datetime.now().isoformat()
-        iteration_start = time.perf_counter()
-        run_record = {"iteration": iteration, "started_at": started_at, "pairs": {}}
-
-        row = {"iteration": iteration, "started_at": started_at, "completed_at": None, "duration_ms": None}
+        print(f"Raw latency iteration {iteration}/{iterations}")
+        iteration_started_at = datetime.datetime.now().isoformat()
 
         for pair in LATENCY_PAIRS:
             print(f"  Testing {pair['name']}")
-            result = measure_latency_jitter_time(pair["src_container"], pair["dst_ip"])
-            result["hops"] = pair["hops"]
-            run_record["pairs"][pair["name"]] = result
 
-            k = pair["key"]
-            row[f"{k}_name"] = pair["name"]
-            row[f"{k}_hops"] = pair["hops"]
-            row[f"{k}_latency_min_ms"] = result["latency_min_ms"]
-            row[f"{k}_latency_avg_ms"] = result["latency_avg_ms"]
-            row[f"{k}_latency_max_ms"] = result["latency_max_ms"]
-            row[f"{k}_latency_std_ms"] = result["latency_std_ms"]
-            row[f"{k}_latency_median_ms"] = result["latency_median_ms"]
-            row[f"{k}_jitter_ms"] = result["jitter_ms"]
-            row[f"{k}_packet_loss_pct"] = result["packet_loss_pct"]
-            row[f"{k}_samples_received"] = result["samples_received"]
+            for sample_number in range(1, count + 1):
+                sample_started_at = datetime.datetime.now().isoformat()
+                result = timed_single_ping(pair["src_container"], pair["dst_ip"])
 
-        completed_at = datetime.datetime.now().isoformat()
-        row["completed_at"] = completed_at
-        row["duration_ms"] = round((time.perf_counter() - iteration_start) * 1000.0, 3)
-        run_record["completed_at"] = completed_at
-        run_record["duration_ms"] = row["duration_ms"]
+                rows.append({
+                    "iteration": iteration,
+                    "iteration_started_at": iteration_started_at,
+                    "sample_timestamp": sample_started_at,
+                    "pair": pair["name"],
+                    "pair_key": pair["key"],
+                    "hops": pair["hops"],
+                    "src_container": pair["src_container"],
+                    "dst_ip": pair["dst_ip"],
+                    "sample_number": sample_number,
+                    "success": result["success"],
+                    "time_module_delay_ms": result["time_module_delay_ms"],
+                    "ping_rtt_ms": result["ping_rtt_ms"],
+                    "packet_loss_pct": result["packet_loss_pct"],
+                    "error": result.get("error"),
+                })
 
-        rows.append(row)
-        raw_runs.append(run_record)
+                if sample_number < count and interval > 0:
+                    time.sleep(interval)
 
         if iteration < iterations and pause_s > 0:
             time.sleep(pause_s)
 
-    summary = {}
-    for pair in LATENCY_PAIRS:
-        name = pair["name"]
-        pair_runs = [r["pairs"].get(name, {}) for r in raw_runs]
-        summary[name] = {
-            "hops": pair["hops"],
-            "latency_avg_ms": compute_numeric_summary([x.get("latency_avg_ms") for x in pair_runs]),
-            "jitter_ms": compute_numeric_summary([x.get("jitter_ms") for x in pair_runs]),
-            "packet_loss_pct": compute_numeric_summary([x.get("packet_loss_pct") for x in pair_runs]),
-        }
-
     payload = {
         "timestamp": datetime.datetime.now().isoformat(),
-        "method": "Python time.perf_counter around single ICMP ping samples; jitter is mean absolute difference between consecutive measured delays.",
+        "method": "Raw latency samples collected using Python time.perf_counter() around single ICMP ping commands. Descriptive statistics and jitter are calculated later from the raw dataset.",
         "iterations_requested": iterations,
-        "iterations_completed": len(raw_runs),
-        "raw_runs": raw_runs,
-        "summary": summary,
+        "iterations_completed": iterations,
+        "samples_per_pair_per_iteration": count,
+        "inter_sample_interval_seconds": interval,
+        "pause_between_iterations_seconds": pause_s,
+        "pairs": LATENCY_PAIRS,
+        "raw_samples": rows,
     }
 
     with open(latency_json, "w", encoding="utf-8") as f:
@@ -211,8 +155,8 @@ def run_latency_jitter_tests(iterations: int, pause_s: float, latency_json: str,
             writer.writeheader()
             writer.writerows(rows)
 
-    print(f"Latency/jitter JSON saved to {latency_json}")
-    print(f"Latency/jitter CSV saved to {latency_csv}")
+    print(f"Raw latency JSON saved to {latency_json}")
+    print(f"Raw latency CSV saved to {latency_csv}")
 
 
 def measure_convergence_once(container: str, dst_ip: str) -> Dict[str, Optional[float]]:
@@ -250,6 +194,7 @@ def run_convergence_tests(iterations: int, conv_json: str, conv_csv: str) -> Non
         result = measure_convergence_once(CONVERGENCE_CONTAINER, CONVERGENCE_DST_IP)
         rows.append({
             "iteration": iteration,
+            "timestamp": datetime.datetime.now().isoformat(),
             "failure_ms": result["failure_ms"],
             "recovery_ms": result["recovery_ms"],
         })
@@ -259,17 +204,13 @@ def run_convergence_tests(iterations: int, conv_json: str, conv_csv: str) -> Non
         "iterations_requested": iterations,
         "iterations_completed": len(rows),
         "raw_runs": rows,
-        "summary": {
-            "failure_ms": compute_numeric_summary([r["failure_ms"] for r in rows]),
-            "recovery_ms": compute_numeric_summary([r["recovery_ms"] for r in rows]),
-        },
     }
 
     with open(conv_json, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
 
     with open(conv_csv, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=["iteration", "failure_ms", "recovery_ms"])
+        writer = csv.DictWriter(f, fieldnames=["iteration", "timestamp", "failure_ms", "recovery_ms"])
         writer.writeheader()
         writer.writerows(rows)
 
@@ -278,18 +219,33 @@ def run_convergence_tests(iterations: int, conv_json: str, conv_csv: str) -> Non
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="SEED IE latency/jitter + convergence benchmark")
+    parser = argparse.ArgumentParser(description="SEED IE raw latency + convergence benchmark")
     parser.add_argument("--iterations", type=int, default=DEFAULT_ITERATIONS)
     parser.add_argument("--convergence-iterations", type=int, default=CONVERGENCE_ITERATIONS)
-    parser.add_argument("--pause", type=float, default=DEFAULT_PAUSE_BETWEEN_RUNS)
+    parser.add_argument("--count", type=int, default=PING_COUNT, help="Raw ping samples per route per iteration")
+    parser.add_argument("--interval", type=float, default=PING_INTERVAL, help="Pause between single ping samples in seconds")
+    parser.add_argument("--pause", type=float, default=DEFAULT_PAUSE_BETWEEN_RUNS, help="Pause between iterations in seconds")
     parser.add_argument("--latency-json", default=LATENCY_JSON)
     parser.add_argument("--latency-csv", default=LATENCY_CSV)
     parser.add_argument("--conv-json", default=CONV_JSON)
     parser.add_argument("--conv-csv", default=CONV_CSV)
+    parser.add_argument("--skip-latency", action="store_true", help="Only run convergence")
+    parser.add_argument("--skip-convergence", action="store_true", help="Only run raw latency")
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    run_latency_jitter_tests(args.iterations, args.pause, args.latency_json, args.latency_csv)
-    run_convergence_tests(args.convergence_iterations, args.conv_json, args.conv_csv)
+
+    if not args.skip_latency:
+        run_raw_latency_tests(
+            iterations=args.iterations,
+            pause_s=args.pause,
+            latency_json=args.latency_json,
+            latency_csv=args.latency_csv,
+            count=args.count,
+            interval=args.interval,
+        )
+
+    if not args.skip_convergence:
+        run_convergence_tests(args.convergence_iterations, args.conv_json, args.conv_csv)
