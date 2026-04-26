@@ -1,0 +1,607 @@
+{
+  "timestamp": "2026-04-24T16:42:40.605474",
+  "iterations_requested": 100,
+  "iterations_completed": 100,
+  "raw_runs": [
+    {
+      "iteration": 1,
+      "timestamp": "2026-04-24T16:41:21.371800",
+      "failure_ms": 1001.085,
+      "recovery_ms": 221.135
+    },
+    {
+      "iteration": 2,
+      "timestamp": "2026-04-24T16:41:22.125775",
+      "failure_ms": 238.557,
+      "recovery_ms": 101.036
+    },
+    {
+      "iteration": 3,
+      "timestamp": "2026-04-24T16:41:22.858157",
+      "failure_ms": 140.907,
+      "recovery_ms": 148.733
+    },
+    {
+      "iteration": 4,
+      "timestamp": "2026-04-24T16:41:23.585336",
+      "failure_ms": 256.891,
+      "recovery_ms": 171.98
+    },
+    {
+      "iteration": 5,
+      "timestamp": "2026-04-24T16:41:24.279654",
+      "failure_ms": 202.57,
+      "recovery_ms": 145.301
+    },
+    {
+      "iteration": 6,
+      "timestamp": "2026-04-24T16:41:24.897425",
+      "failure_ms": 171.582,
+      "recovery_ms": 134.692
+    },
+    {
+      "iteration": 7,
+      "timestamp": "2026-04-24T16:41:25.792899",
+      "failure_ms": 156.609,
+      "recovery_ms": 193.291
+    },
+    {
+      "iteration": 8,
+      "timestamp": "2026-04-24T16:41:26.546456",
+      "failure_ms": 162.681,
+      "recovery_ms": 263.64
+    },
+    {
+      "iteration": 9,
+      "timestamp": "2026-04-24T16:41:27.228334",
+      "failure_ms": 131.326,
+      "recovery_ms": 157.455
+    },
+    {
+      "iteration": 10,
+      "timestamp": "2026-04-24T16:41:28.064679",
+      "failure_ms": 216.602,
+      "recovery_ms": 224.041
+    },
+    {
+      "iteration": 11,
+      "timestamp": "2026-04-24T16:41:28.879328",
+      "failure_ms": 166.289,
+      "recovery_ms": 138.22
+    },
+    {
+      "iteration": 12,
+      "timestamp": "2026-04-24T16:41:29.619013",
+      "failure_ms": 235.228,
+      "recovery_ms": 160.847
+    },
+    {
+      "iteration": 13,
+      "timestamp": "2026-04-24T16:41:30.435274",
+      "failure_ms": 179.053,
+      "recovery_ms": 173.318
+    },
+    {
+      "iteration": 14,
+      "timestamp": "2026-04-24T16:41:31.299134",
+      "failure_ms": 199.991,
+      "recovery_ms": 139.259
+    },
+    {
+      "iteration": 15,
+      "timestamp": "2026-04-24T16:41:32.079183",
+      "failure_ms": 231.142,
+      "recovery_ms": 238.696
+    },
+    {
+      "iteration": 16,
+      "timestamp": "2026-04-24T16:41:32.836638",
+      "failure_ms": 209.264,
+      "recovery_ms": 201.869
+    },
+    {
+      "iteration": 17,
+      "timestamp": "2026-04-24T16:41:33.450765",
+      "failure_ms": 180.294,
+      "recovery_ms": 144.416
+    },
+    {
+      "iteration": 18,
+      "timestamp": "2026-04-24T16:41:34.078401",
+      "failure_ms": 153.124,
+      "recovery_ms": 140.739
+    },
+    {
+      "iteration": 19,
+      "timestamp": "2026-04-24T16:41:34.900516",
+      "failure_ms": 230.658,
+      "recovery_ms": 127.094
+    },
+    {
+      "iteration": 20,
+      "timestamp": "2026-04-24T16:41:35.678666",
+      "failure_ms": 193.489,
+      "recovery_ms": 106.115
+    },
+    {
+      "iteration": 21,
+      "timestamp": "2026-04-24T16:41:36.623798",
+      "failure_ms": 148.043,
+      "recovery_ms": 209.141
+    },
+    {
+      "iteration": 22,
+      "timestamp": "2026-04-24T16:41:37.281225",
+      "failure_ms": 238.324,
+      "recovery_ms": 90.588
+    },
+    {
+      "iteration": 23,
+      "timestamp": "2026-04-24T16:41:38.003275",
+      "failure_ms": 191.562,
+      "recovery_ms": 241.465
+    },
+    {
+      "iteration": 24,
+      "timestamp": "2026-04-24T16:41:38.696214",
+      "failure_ms": 164.458,
+      "recovery_ms": 199.132
+    },
+    {
+      "iteration": 25,
+      "timestamp": "2026-04-24T16:41:39.522663",
+      "failure_ms": 178.552,
+      "recovery_ms": 223.712
+    },
+    {
+      "iteration": 26,
+      "timestamp": "2026-04-24T16:41:40.102489",
+      "failure_ms": 137.652,
+      "recovery_ms": 147.779
+    },
+    {
+      "iteration": 27,
+      "timestamp": "2026-04-24T16:41:40.791926",
+      "failure_ms": 176.546,
+      "recovery_ms": 251.626
+    },
+    {
+      "iteration": 28,
+      "timestamp": "2026-04-24T16:41:41.935015",
+      "failure_ms": 204.233,
+      "recovery_ms": 440.418
+    },
+    {
+      "iteration": 29,
+      "timestamp": "2026-04-24T16:41:42.916292",
+      "failure_ms": 259.067,
+      "recovery_ms": 270.018
+    },
+    {
+      "iteration": 30,
+      "timestamp": "2026-04-24T16:41:43.710397",
+      "failure_ms": 188.522,
+      "recovery_ms": 186.885
+    },
+    {
+      "iteration": 31,
+      "timestamp": "2026-04-24T16:41:44.541088",
+      "failure_ms": 187.338,
+      "recovery_ms": 194.918
+    },
+    {
+      "iteration": 32,
+      "timestamp": "2026-04-24T16:41:45.141356",
+      "failure_ms": 237.5,
+      "recovery_ms": 127.173
+    },
+    {
+      "iteration": 33,
+      "timestamp": "2026-04-24T16:41:45.991366",
+      "failure_ms": 267.856,
+      "recovery_ms": 167.782
+    },
+    {
+      "iteration": 34,
+      "timestamp": "2026-04-24T16:41:46.736205",
+      "failure_ms": 157.722,
+      "recovery_ms": 196.042
+    },
+    {
+      "iteration": 35,
+      "timestamp": "2026-04-24T16:41:47.738480",
+      "failure_ms": 257.218,
+      "recovery_ms": 193.644
+    },
+    {
+      "iteration": 36,
+      "timestamp": "2026-04-24T16:41:48.620099",
+      "failure_ms": 87.186,
+      "recovery_ms": 378.379
+    },
+    {
+      "iteration": 37,
+      "timestamp": "2026-04-24T16:41:49.478076",
+      "failure_ms": 167.483,
+      "recovery_ms": 386.77
+    },
+    {
+      "iteration": 38,
+      "timestamp": "2026-04-24T16:41:50.800738",
+      "failure_ms": 287.378,
+      "recovery_ms": 349.476
+    },
+    {
+      "iteration": 39,
+      "timestamp": "2026-04-24T16:41:52.187824",
+      "failure_ms": 316.692,
+      "recovery_ms": 339.197
+    },
+    {
+      "iteration": 40,
+      "timestamp": "2026-04-24T16:41:52.904999",
+      "failure_ms": 116.761,
+      "recovery_ms": 135.751
+    },
+    {
+      "iteration": 41,
+      "timestamp": "2026-04-24T16:41:53.518712",
+      "failure_ms": 150.637,
+      "recovery_ms": 101.43
+    },
+    {
+      "iteration": 42,
+      "timestamp": "2026-04-24T16:41:54.262804",
+      "failure_ms": 159.22,
+      "recovery_ms": 212.935
+    },
+    {
+      "iteration": 43,
+      "timestamp": "2026-04-24T16:41:55.257262",
+      "failure_ms": 190.216,
+      "recovery_ms": 295.686
+    },
+    {
+      "iteration": 44,
+      "timestamp": "2026-04-24T16:41:55.939591",
+      "failure_ms": 181.031,
+      "recovery_ms": 142.702
+    },
+    {
+      "iteration": 45,
+      "timestamp": "2026-04-24T16:41:56.687738",
+      "failure_ms": 178.898,
+      "recovery_ms": 148.209
+    },
+    {
+      "iteration": 46,
+      "timestamp": "2026-04-24T16:41:57.576923",
+      "failure_ms": 140.779,
+      "recovery_ms": 175.451
+    },
+    {
+      "iteration": 47,
+      "timestamp": "2026-04-24T16:41:58.377064",
+      "failure_ms": 130.676,
+      "recovery_ms": 186.776
+    },
+    {
+      "iteration": 48,
+      "timestamp": "2026-04-24T16:41:59.060868",
+      "failure_ms": 170.477,
+      "recovery_ms": 212.304
+    },
+    {
+      "iteration": 49,
+      "timestamp": "2026-04-24T16:41:59.827972",
+      "failure_ms": 204.014,
+      "recovery_ms": 182.994
+    },
+    {
+      "iteration": 50,
+      "timestamp": "2026-04-24T16:42:00.647878",
+      "failure_ms": 248.776,
+      "recovery_ms": 297.521
+    },
+    {
+      "iteration": 51,
+      "timestamp": "2026-04-24T16:42:01.415718",
+      "failure_ms": 125.785,
+      "recovery_ms": 230.309
+    },
+    {
+      "iteration": 52,
+      "timestamp": "2026-04-24T16:42:02.052449",
+      "failure_ms": 134.291,
+      "recovery_ms": 122.93
+    },
+    {
+      "iteration": 53,
+      "timestamp": "2026-04-24T16:42:02.960523",
+      "failure_ms": 178.072,
+      "recovery_ms": 187.256
+    },
+    {
+      "iteration": 54,
+      "timestamp": "2026-04-24T16:42:03.733124",
+      "failure_ms": 165.886,
+      "recovery_ms": 150.05
+    },
+    {
+      "iteration": 55,
+      "timestamp": "2026-04-24T16:42:04.597105",
+      "failure_ms": 132.316,
+      "recovery_ms": 197.31
+    },
+    {
+      "iteration": 56,
+      "timestamp": "2026-04-24T16:42:05.375122",
+      "failure_ms": 157.052,
+      "recovery_ms": 157.549
+    },
+    {
+      "iteration": 57,
+      "timestamp": "2026-04-24T16:42:06.033308",
+      "failure_ms": 214.836,
+      "recovery_ms": 121.618
+    },
+    {
+      "iteration": 58,
+      "timestamp": "2026-04-24T16:42:06.764448",
+      "failure_ms": 243.895,
+      "recovery_ms": 144.126
+    },
+    {
+      "iteration": 59,
+      "timestamp": "2026-04-24T16:42:07.555340",
+      "failure_ms": 106.516,
+      "recovery_ms": 209.91
+    },
+    {
+      "iteration": 60,
+      "timestamp": "2026-04-24T16:42:08.659269",
+      "failure_ms": 265.07,
+      "recovery_ms": 250.863
+    },
+    {
+      "iteration": 61,
+      "timestamp": "2026-04-24T16:42:09.336052",
+      "failure_ms": 209.859,
+      "recovery_ms": 113.833
+    },
+    {
+      "iteration": 62,
+      "timestamp": "2026-04-24T16:42:10.106032",
+      "failure_ms": 235.366,
+      "recovery_ms": 180.03
+    },
+    {
+      "iteration": 63,
+      "timestamp": "2026-04-24T16:42:10.905713",
+      "failure_ms": 188.903,
+      "recovery_ms": 172.738
+    },
+    {
+      "iteration": 64,
+      "timestamp": "2026-04-24T16:42:11.712582",
+      "failure_ms": 263.893,
+      "recovery_ms": 142.27
+    },
+    {
+      "iteration": 65,
+      "timestamp": "2026-04-24T16:42:12.392538",
+      "failure_ms": 134.769,
+      "recovery_ms": 209.865
+    },
+    {
+      "iteration": 66,
+      "timestamp": "2026-04-24T16:42:13.308302",
+      "failure_ms": 150.405,
+      "recovery_ms": 260.681
+    },
+    {
+      "iteration": 67,
+      "timestamp": "2026-04-24T16:42:14.074150",
+      "failure_ms": 230.001,
+      "recovery_ms": 163.86
+    },
+    {
+      "iteration": 68,
+      "timestamp": "2026-04-24T16:42:14.796045",
+      "failure_ms": 212.196,
+      "recovery_ms": 152.482
+    },
+    {
+      "iteration": 69,
+      "timestamp": "2026-04-24T16:42:15.517598",
+      "failure_ms": 157.254,
+      "recovery_ms": 185.199
+    },
+    {
+      "iteration": 70,
+      "timestamp": "2026-04-24T16:42:16.286518",
+      "failure_ms": 205.188,
+      "recovery_ms": 126.146
+    },
+    {
+      "iteration": 71,
+      "timestamp": "2026-04-24T16:42:16.935914",
+      "failure_ms": 201.193,
+      "recovery_ms": 90.123
+    },
+    {
+      "iteration": 72,
+      "timestamp": "2026-04-24T16:42:17.550895",
+      "failure_ms": 130.139,
+      "recovery_ms": 116.866
+    },
+    {
+      "iteration": 73,
+      "timestamp": "2026-04-24T16:42:18.518213",
+      "failure_ms": 173.095,
+      "recovery_ms": 323.53
+    },
+    {
+      "iteration": 74,
+      "timestamp": "2026-04-24T16:42:19.335862",
+      "failure_ms": 134.647,
+      "recovery_ms": 294.213
+    },
+    {
+      "iteration": 75,
+      "timestamp": "2026-04-24T16:42:20.277798",
+      "failure_ms": 229.017,
+      "recovery_ms": 270.96
+    },
+    {
+      "iteration": 76,
+      "timestamp": "2026-04-24T16:42:21.310743",
+      "failure_ms": 276.691,
+      "recovery_ms": 243.354
+    },
+    {
+      "iteration": 77,
+      "timestamp": "2026-04-24T16:42:22.132296",
+      "failure_ms": 224.96,
+      "recovery_ms": 195.634
+    },
+    {
+      "iteration": 78,
+      "timestamp": "2026-04-24T16:42:22.858744",
+      "failure_ms": 180.038,
+      "recovery_ms": 173.752
+    },
+    {
+      "iteration": 79,
+      "timestamp": "2026-04-24T16:42:23.746668",
+      "failure_ms": 297.159,
+      "recovery_ms": 297.207
+    },
+    {
+      "iteration": 80,
+      "timestamp": "2026-04-24T16:42:24.760416",
+      "failure_ms": 260.272,
+      "recovery_ms": 257.905
+    },
+    {
+      "iteration": 81,
+      "timestamp": "2026-04-24T16:42:25.557049",
+      "failure_ms": 259.386,
+      "recovery_ms": 226.076
+    },
+    {
+      "iteration": 82,
+      "timestamp": "2026-04-24T16:42:26.416800",
+      "failure_ms": 163.132,
+      "recovery_ms": 132.81
+    },
+    {
+      "iteration": 83,
+      "timestamp": "2026-04-24T16:42:27.249587",
+      "failure_ms": 138.444,
+      "recovery_ms": 120.331
+    },
+    {
+      "iteration": 84,
+      "timestamp": "2026-04-24T16:42:28.050061",
+      "failure_ms": 160.327,
+      "recovery_ms": 111.997
+    },
+    {
+      "iteration": 85,
+      "timestamp": "2026-04-24T16:42:28.795774",
+      "failure_ms": 143.479,
+      "recovery_ms": 124.986
+    },
+    {
+      "iteration": 86,
+      "timestamp": "2026-04-24T16:42:29.685355",
+      "failure_ms": 363.326,
+      "recovery_ms": 148.017
+    },
+    {
+      "iteration": 87,
+      "timestamp": "2026-04-24T16:42:30.536253",
+      "failure_ms": 143.044,
+      "recovery_ms": 227.466
+    },
+    {
+      "iteration": 88,
+      "timestamp": "2026-04-24T16:42:31.299367",
+      "failure_ms": 206.2,
+      "recovery_ms": 230.446
+    },
+    {
+      "iteration": 89,
+      "timestamp": "2026-04-24T16:42:32.267731",
+      "failure_ms": 168.786,
+      "recovery_ms": 183.49
+    },
+    {
+      "iteration": 90,
+      "timestamp": "2026-04-24T16:42:33.055447",
+      "failure_ms": 197.054,
+      "recovery_ms": 122.997
+    },
+    {
+      "iteration": 91,
+      "timestamp": "2026-04-24T16:42:33.813609",
+      "failure_ms": 136.853,
+      "recovery_ms": 137.045
+    },
+    {
+      "iteration": 92,
+      "timestamp": "2026-04-24T16:42:34.560575",
+      "failure_ms": 101.812,
+      "recovery_ms": 203.697
+    },
+    {
+      "iteration": 93,
+      "timestamp": "2026-04-24T16:42:35.259589",
+      "failure_ms": 130.828,
+      "recovery_ms": 199.574
+    },
+    {
+      "iteration": 94,
+      "timestamp": "2026-04-24T16:42:36.115371",
+      "failure_ms": 155.737,
+      "recovery_ms": 232.768
+    },
+    {
+      "iteration": 95,
+      "timestamp": "2026-04-24T16:42:36.978711",
+      "failure_ms": 216.73,
+      "recovery_ms": 170.159
+    },
+    {
+      "iteration": 96,
+      "timestamp": "2026-04-24T16:42:37.774326",
+      "failure_ms": 147.492,
+      "recovery_ms": 217.956
+    },
+    {
+      "iteration": 97,
+      "timestamp": "2026-04-24T16:42:38.446881",
+      "failure_ms": 132.157,
+      "recovery_ms": 186.136
+    },
+    {
+      "iteration": 98,
+      "timestamp": "2026-04-24T16:42:39.154325",
+      "failure_ms": 101.945,
+      "recovery_ms": 113.537
+    },
+    {
+      "iteration": 99,
+      "timestamp": "2026-04-24T16:42:39.750069",
+      "failure_ms": 119.958,
+      "recovery_ms": 130.941
+    },
+    {
+      "iteration": 100,
+      "timestamp": "2026-04-24T16:42:40.605465",
+      "failure_ms": 313.8,
+      "recovery_ms": 184.049
+    }
+  ]
+}

@@ -1,0 +1,524 @@
+{
+  "iterations_requested": 100,
+  "iterations_completed": 100,
+  "raw_runs": [
+    {
+      "iteration": 1,
+      "failure_ms": 351.239,
+      "recovery_ms": 149.555
+    },
+    {
+      "iteration": 2,
+      "failure_ms": 285.971,
+      "recovery_ms": 107.562
+    },
+    {
+      "iteration": 3,
+      "failure_ms": 195.339,
+      "recovery_ms": 238.827
+    },
+    {
+      "iteration": 4,
+      "failure_ms": 267.126,
+      "recovery_ms": 272.504
+    },
+    {
+      "iteration": 5,
+      "failure_ms": 210.782,
+      "recovery_ms": 126.729
+    },
+    {
+      "iteration": 6,
+      "failure_ms": 85.085,
+      "recovery_ms": 154.718
+    },
+    {
+      "iteration": 7,
+      "failure_ms": 103.577,
+      "recovery_ms": 137.564
+    },
+    {
+      "iteration": 8,
+      "failure_ms": 125.497,
+      "recovery_ms": 170.524
+    },
+    {
+      "iteration": 9,
+      "failure_ms": 111.676,
+      "recovery_ms": 201.035
+    },
+    {
+      "iteration": 10,
+      "failure_ms": 209.787,
+      "recovery_ms": 135.022
+    },
+    {
+      "iteration": 11,
+      "failure_ms": 168.611,
+      "recovery_ms": 140.724
+    },
+    {
+      "iteration": 12,
+      "failure_ms": 155.508,
+      "recovery_ms": 216.809
+    },
+    {
+      "iteration": 13,
+      "failure_ms": 185.903,
+      "recovery_ms": 105.262
+    },
+    {
+      "iteration": 14,
+      "failure_ms": 130.178,
+      "recovery_ms": 237.918
+    },
+    {
+      "iteration": 15,
+      "failure_ms": 146.305,
+      "recovery_ms": 185.615
+    },
+    {
+      "iteration": 16,
+      "failure_ms": 176.803,
+      "recovery_ms": 128.409
+    },
+    {
+      "iteration": 17,
+      "failure_ms": 251.533,
+      "recovery_ms": 179.282
+    },
+    {
+      "iteration": 18,
+      "failure_ms": 158.193,
+      "recovery_ms": 111.925
+    },
+    {
+      "iteration": 19,
+      "failure_ms": 132.039,
+      "recovery_ms": 207.246
+    },
+    {
+      "iteration": 20,
+      "failure_ms": 189.407,
+      "recovery_ms": 141.057
+    },
+    {
+      "iteration": 21,
+      "failure_ms": 202.639,
+      "recovery_ms": 186.102
+    },
+    {
+      "iteration": 22,
+      "failure_ms": 155.527,
+      "recovery_ms": 152.087
+    },
+    {
+      "iteration": 23,
+      "failure_ms": 217.852,
+      "recovery_ms": 113.127
+    },
+    {
+      "iteration": 24,
+      "failure_ms": 200.652,
+      "recovery_ms": 178.718
+    },
+    {
+      "iteration": 25,
+      "failure_ms": 151.819,
+      "recovery_ms": 128.5
+    },
+    {
+      "iteration": 26,
+      "failure_ms": 179.244,
+      "recovery_ms": 240.507
+    },
+    {
+      "iteration": 27,
+      "failure_ms": 156.827,
+      "recovery_ms": 220.251
+    },
+    {
+      "iteration": 28,
+      "failure_ms": 117.736,
+      "recovery_ms": 124.941
+    },
+    {
+      "iteration": 29,
+      "failure_ms": 118.779,
+      "recovery_ms": 159.178
+    },
+    {
+      "iteration": 30,
+      "failure_ms": 254.635,
+      "recovery_ms": 212.09
+    },
+    {
+      "iteration": 31,
+      "failure_ms": 204.238,
+      "recovery_ms": 147.196
+    },
+    {
+      "iteration": 32,
+      "failure_ms": 167.751,
+      "recovery_ms": 158.452
+    },
+    {
+      "iteration": 33,
+      "failure_ms": 132.614,
+      "recovery_ms": 157.657
+    },
+    {
+      "iteration": 34,
+      "failure_ms": 169.186,
+      "recovery_ms": 133.181
+    },
+    {
+      "iteration": 35,
+      "failure_ms": 116.538,
+      "recovery_ms": 127.427
+    },
+    {
+      "iteration": 36,
+      "failure_ms": 132.01,
+      "recovery_ms": 117.301
+    },
+    {
+      "iteration": 37,
+      "failure_ms": 97.527,
+      "recovery_ms": 212.661
+    },
+    {
+      "iteration": 38,
+      "failure_ms": 186.761,
+      "recovery_ms": 100.859
+    },
+    {
+      "iteration": 39,
+      "failure_ms": 207.108,
+      "recovery_ms": 188.159
+    },
+    {
+      "iteration": 40,
+      "failure_ms": 144.344,
+      "recovery_ms": 129.35
+    },
+    {
+      "iteration": 41,
+      "failure_ms": 144.202,
+      "recovery_ms": 117.564
+    },
+    {
+      "iteration": 42,
+      "failure_ms": 155.953,
+      "recovery_ms": 148.174
+    },
+    {
+      "iteration": 43,
+      "failure_ms": 175.021,
+      "recovery_ms": 121.272
+    },
+    {
+      "iteration": 44,
+      "failure_ms": 121.319,
+      "recovery_ms": 121.742
+    },
+    {
+      "iteration": 45,
+      "failure_ms": 106.651,
+      "recovery_ms": 139.569
+    },
+    {
+      "iteration": 46,
+      "failure_ms": 188.115,
+      "recovery_ms": 147.43
+    },
+    {
+      "iteration": 47,
+      "failure_ms": 133.368,
+      "recovery_ms": 160.378
+    },
+    {
+      "iteration": 48,
+      "failure_ms": 155.366,
+      "recovery_ms": 136.318
+    },
+    {
+      "iteration": 49,
+      "failure_ms": 236.134,
+      "recovery_ms": 111.447
+    },
+    {
+      "iteration": 50,
+      "failure_ms": 185.238,
+      "recovery_ms": 198.788
+    },
+    {
+      "iteration": 51,
+      "failure_ms": 187.322,
+      "recovery_ms": 137.792
+    },
+    {
+      "iteration": 52,
+      "failure_ms": 174.973,
+      "recovery_ms": 174.247
+    },
+    {
+      "iteration": 53,
+      "failure_ms": 105.112,
+      "recovery_ms": 198.403
+    },
+    {
+      "iteration": 54,
+      "failure_ms": 147.715,
+      "recovery_ms": 90.651
+    },
+    {
+      "iteration": 55,
+      "failure_ms": 108.641,
+      "recovery_ms": 217.873
+    },
+    {
+      "iteration": 56,
+      "failure_ms": 143.745,
+      "recovery_ms": 152.981
+    },
+    {
+      "iteration": 57,
+      "failure_ms": 151.071,
+      "recovery_ms": 228.063
+    },
+    {
+      "iteration": 58,
+      "failure_ms": 110.415,
+      "recovery_ms": 138.255
+    },
+    {
+      "iteration": 59,
+      "failure_ms": 77.151,
+      "recovery_ms": 118.992
+    },
+    {
+      "iteration": 60,
+      "failure_ms": 143.31,
+      "recovery_ms": 183.112
+    },
+    {
+      "iteration": 61,
+      "failure_ms": 160.581,
+      "recovery_ms": 191.894
+    },
+    {
+      "iteration": 62,
+      "failure_ms": 158.877,
+      "recovery_ms": 149.393
+    },
+    {
+      "iteration": 63,
+      "failure_ms": 136.199,
+      "recovery_ms": 133.523
+    },
+    {
+      "iteration": 64,
+      "failure_ms": 130.051,
+      "recovery_ms": 91.056
+    },
+    {
+      "iteration": 65,
+      "failure_ms": 138.493,
+      "recovery_ms": 212.405
+    },
+    {
+      "iteration": 66,
+      "failure_ms": 135.206,
+      "recovery_ms": 117.529
+    },
+    {
+      "iteration": 67,
+      "failure_ms": 126.984,
+      "recovery_ms": 268.603
+    },
+    {
+      "iteration": 68,
+      "failure_ms": 180.323,
+      "recovery_ms": 114.639
+    },
+    {
+      "iteration": 69,
+      "failure_ms": 212.89,
+      "recovery_ms": 170.929
+    },
+    {
+      "iteration": 70,
+      "failure_ms": 186.362,
+      "recovery_ms": 201.393
+    },
+    {
+      "iteration": 71,
+      "failure_ms": 180.636,
+      "recovery_ms": 165.666
+    },
+    {
+      "iteration": 72,
+      "failure_ms": 183.31,
+      "recovery_ms": 162.817
+    },
+    {
+      "iteration": 73,
+      "failure_ms": 234.163,
+      "recovery_ms": 166.854
+    },
+    {
+      "iteration": 74,
+      "failure_ms": 266.018,
+      "recovery_ms": 145.888
+    },
+    {
+      "iteration": 75,
+      "failure_ms": 232.523,
+      "recovery_ms": 139.259
+    },
+    {
+      "iteration": 76,
+      "failure_ms": 145.218,
+      "recovery_ms": 164.26
+    },
+    {
+      "iteration": 77,
+      "failure_ms": 96.215,
+      "recovery_ms": 106.698
+    },
+    {
+      "iteration": 78,
+      "failure_ms": 163.476,
+      "recovery_ms": 134.997
+    },
+    {
+      "iteration": 79,
+      "failure_ms": 101.277,
+      "recovery_ms": 116.721
+    },
+    {
+      "iteration": 80,
+      "failure_ms": 142.106,
+      "recovery_ms": 181.087
+    },
+    {
+      "iteration": 81,
+      "failure_ms": 114.167,
+      "recovery_ms": 193.777
+    },
+    {
+      "iteration": 82,
+      "failure_ms": 108.872,
+      "recovery_ms": 100.449
+    },
+    {
+      "iteration": 83,
+      "failure_ms": 135.191,
+      "recovery_ms": 180.632
+    },
+    {
+      "iteration": 84,
+      "failure_ms": 118.557,
+      "recovery_ms": 189.934
+    },
+    {
+      "iteration": 85,
+      "failure_ms": 124.793,
+      "recovery_ms": 146.005
+    },
+    {
+      "iteration": 86,
+      "failure_ms": 136.105,
+      "recovery_ms": 187.986
+    },
+    {
+      "iteration": 87,
+      "failure_ms": 154.964,
+      "recovery_ms": 160.914
+    },
+    {
+      "iteration": 88,
+      "failure_ms": 169.891,
+      "recovery_ms": 207.17
+    },
+    {
+      "iteration": 89,
+      "failure_ms": 111.77,
+      "recovery_ms": 201.153
+    },
+    {
+      "iteration": 90,
+      "failure_ms": 136.859,
+      "recovery_ms": 85.657
+    },
+    {
+      "iteration": 91,
+      "failure_ms": 140.893,
+      "recovery_ms": 112.949
+    },
+    {
+      "iteration": 92,
+      "failure_ms": 90.207,
+      "recovery_ms": 162.402
+    },
+    {
+      "iteration": 93,
+      "failure_ms": 149.789,
+      "recovery_ms": 116.677
+    },
+    {
+      "iteration": 94,
+      "failure_ms": 95.107,
+      "recovery_ms": 100.125
+    },
+    {
+      "iteration": 95,
+      "failure_ms": 162.655,
+      "recovery_ms": 101.174
+    },
+    {
+      "iteration": 96,
+      "failure_ms": 124.503,
+      "recovery_ms": 131.812
+    },
+    {
+      "iteration": 97,
+      "failure_ms": 153.895,
+      "recovery_ms": 112.198
+    },
+    {
+      "iteration": 98,
+      "failure_ms": 150.147,
+      "recovery_ms": 143.5
+    },
+    {
+      "iteration": 99,
+      "failure_ms": 196.034,
+      "recovery_ms": 134.249
+    },
+    {
+      "iteration": 100,
+      "failure_ms": 135.416,
+      "recovery_ms": 156.642
+    }
+  ],
+  "summary": {
+    "failure_ms": {
+      "count": 100,
+      "mean": 159.25891,
+      "min": 77.151,
+      "max": 351.239,
+      "stdev": 47.114144,
+      "median": 151.445
+    },
+    "recovery_ms": {
+      "count": 100,
+      "mean": 156.40098,
+      "min": 85.657,
+      "max": 272.504,
+      "stdev": 41.040154,
+      "median": 148.7835
+    }
+  }
+}
