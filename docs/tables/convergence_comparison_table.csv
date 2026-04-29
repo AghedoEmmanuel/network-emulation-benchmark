@@ -1,0 +1,5 @@
+Event,Platform,Samples,Min_ms,Max_ms,Mean_ms,Median_ms,Std_Dev_ms
+Failure,Mininet,100,26.884,67.274,41.544,39.585,10.203
+Failure,SEED IE,100,87.186,1001.085,197.014,179.546,96.904
+Recovery,Mininet,100,24.369,75.214,39.745,39.317,8.625
+Recovery,SEED IE,100,90.123,440.418,191.648,183.77,67.861

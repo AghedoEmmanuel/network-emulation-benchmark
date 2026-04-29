@@ -1,26 +1,43 @@
 import pandas as pd
 import numpy as np
 
+# =========================
+# LOAD MININET DATA
+# =========================
+
 df = pd.read_csv("./result/mininet/mininet_throughput_bandwidth_cpu_memory_raw.csv")
 
 print(df.shape)
 print(df["success"].value_counts(dropna=False))
 
-# safer success filter
+
+# =========================
+# FILTER SUCCESSFUL RUNS
+# =========================
+
 df["success_clean"] = df["success"].astype(str).str.lower().str.strip()
 df = df[df["success_clean"].isin(["true", "1", "yes"])].copy()
 
 print("After success filter:", df.shape)
 
+
+# =========================
+# CLEAN PAIR NAMES
+# =========================
+
 df["pair"] = df["pair"].astype(str).str.strip()
+df["Nodes"] = df["pair"].str.replace("_", "-", regex=False).str.upper()
+
+
+# =========================
+# CLEAN NUMERIC COLUMNS
+# =========================
 
 numeric_cols = [
     "bandwidth_bps",
     "throughput_bps",
     "cpu_percent",
-    "memory_before_percent",
-    "memory_after_percent",
-    "elapsed_ms"
+    "memory_after_percent"
 ]
 
 for col in numeric_cols:
@@ -31,51 +48,92 @@ print(df[numeric_cols].isna().sum())
 
 df = df.dropna(subset=numeric_cols)
 
+
+# =========================
+# UNIT CONVERSION
+# =========================
+
 df["bandwidth_mbps"] = df["bandwidth_bps"] / 1e6
 df["throughput_mbps"] = df["throughput_bps"] / 1e6
-df["memory_utilisation"] = df["memory_after_percent"]
+df["memory_percent"] = df["memory_after_percent"]
 
-IDLE_POWER = 50
-MAX_POWER = 150
 
-df["power_w"] = IDLE_POWER + (df["cpu_percent"] / 100) * (MAX_POWER - IDLE_POWER)
-df["time_hours"] = df["elapsed_ms"] / (1000 * 3600)
-df["energy_kwh"] = (df["power_w"] * df["time_hours"]) / 1000
+# =========================
+# TABLE 1: BANDWIDTH SUMMARY
+# =========================
 
-table = (
-    df.groupby("pair")
+mininet_bandwidth_table = (
+    df
+    .groupby("Nodes")
     .agg(
-        Avg_Bandwidth_Mbps=("bandwidth_mbps", "mean"),
-        Std_Bandwidth_Mbps=("bandwidth_mbps", "std"),
-        Avg_Throughput_Mbps=("throughput_mbps", "mean"),
-        Std_Throughput_Mbps=("throughput_mbps", "std"),
-        Avg_CPU_Percent=("cpu_percent", "mean"),
-        Max_CPU_Percent=("cpu_percent", "max"),
-        Avg_Memory_Percent=("memory_utilisation", "mean"),
-        Max_Memory_Percent=("memory_utilisation", "max"),
-        Avg_Power_W=("power_w", "mean"),
-        Total_Energy_kWh=("energy_kwh", "sum")
+        Mean_Bandwidth_Mbps=("bandwidth_mbps", "mean"),
+        Median_Bandwidth_Mbps=("bandwidth_mbps", "median"),
+        Min_Bandwidth_Mbps=("bandwidth_mbps", "min"),
+        Max_Bandwidth_Mbps=("bandwidth_mbps", "max"),
+        Std_Bandwidth_Mbps=("bandwidth_mbps", "std")
     )
     .reset_index()
+    .round(3)
 )
 
-table["Nodes"] = table["pair"].str.replace("_", "-", regex=False).str.upper()
-table = table.drop(columns=["pair"])
+print("\nMININET Bandwidth Summary")
+print(mininet_bandwidth_table)
 
-table = table[
-    [
-        "Nodes",
-        "Avg_Bandwidth_Mbps",
-        "Std_Bandwidth_Mbps",
-        "Avg_Throughput_Mbps",
-        "Std_Throughput_Mbps",
-        "Avg_CPU_Percent",
-        "Max_CPU_Percent",
-        "Avg_Memory_Percent",
-        "Max_Memory_Percent",
-        "Avg_Power_W",
-        "Total_Energy_kWh"
-    ]
-].round(2)
 
-print(table)
+# =========================
+# TABLE 2: THROUGHPUT SUMMARY
+# =========================
+
+mininet_throughput_table = (
+    df
+    .groupby("Nodes")
+    .agg(
+        Mean_Throughput_Mbps=("throughput_mbps", "mean"),
+        Median_Throughput_Mbps=("throughput_mbps", "median"),
+        Min_Throughput_Mbps=("throughput_mbps", "min"),
+        Max_Throughput_Mbps=("throughput_mbps", "max"),
+        Std_Throughput_Mbps=("throughput_mbps", "std")
+    )
+    .reset_index()
+    .round(3)
+)
+
+print("\nMININET Throughput Summary")
+print(mininet_throughput_table)
+
+
+# =========================
+# TABLE 3: RESOURCE OVERHEAD SUMMARY
+# =========================
+
+mininet_resource_table = (
+    df
+    .groupby("Nodes")
+    .agg(
+        Mean_CPU_Percent=("cpu_percent", "mean"),
+        Median_CPU_Percent=("cpu_percent", "median"),
+        Min_CPU_Percent=("cpu_percent", "min"),
+        Max_CPU_Percent=("cpu_percent", "max"),
+        Std_CPU_Percent=("cpu_percent", "std"),
+
+        Mean_Memory_Percent=("memory_percent", "mean"),
+        Median_Memory_Percent=("memory_percent", "median"),
+        Min_Memory_Percent=("memory_percent", "min"),
+        Max_Memory_Percent=("memory_percent", "max"),
+        Std_Memory_Percent=("memory_percent", "std")
+    )
+    .reset_index()
+    .round(3)
+)
+
+print("\nMININET Resource Overhead Summary")
+print(mininet_resource_table)
+
+
+# =========================
+# OPTIONAL: SAVE ONLY THESE THREE TABLES
+# =========================
+
+mininet_bandwidth_table.to_csv("./docs/tables/mininet_bandwidth_route_summary.csv", index=False)
+mininet_throughput_table.to_csv("./docs/tables/mininet_throughput_route_summary.csv", index=False)
+mininet_resource_table.to_csv("./docs/tables/mininet_resource_overhead_route_summary.csv", index=False)

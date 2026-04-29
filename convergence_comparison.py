@@ -1,169 +1,214 @@
-"""
-Convergence Comparison: SDN (POX/OpenFlow) vs OSPF (FRRouting)
-Dissertation: Comparative Performance Evaluation of Network Emulation Platforms
-"""
- 
-import csv
-import statistics
+import pandas as pd
 import numpy as np
-from scipy import stats
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 import os
+from scipy.stats import mannwhitneyu, ttest_ind
 
-# ── Data loading ──────────────────────────────────────────────────────────────
- 
-def load_csv(path):
-    failure_ms, recovery_ms = [], []
-    with open(path, newline="") as f:
-        for row in csv.DictReader(f):
-            failure_ms.append(float(row["failure_ms"]))
-            recovery_ms.append(float(row["recovery_ms"]))
-    return failure_ms, recovery_ms
- 
- 
-SDN_PATH  = "./results/sdn_benchmark_results_iterative_ms_convergence.csv"
-OSPF_PATH = "./results/ospf_benchmark_results_iterative_ms_convergence.csv"
- 
-sdn_fail,  sdn_rec  = load_csv(SDN_PATH)
-ospf_fail, ospf_rec = load_csv(OSPF_PATH)
+# =========================
+# LOAD DATA
+# =========================
 
-# ── Descriptive statistics ────────────────────────────────────────────────────
- 
-def describe(data, label):
-    return {
-        "label":  label,
-        "n":      len(data),
-        "mean":   statistics.mean(data),
-        "median": statistics.median(data),
-        "stdev":  statistics.stdev(data),
-        "min":    min(data),
-        "max":    max(data),
-        "q1":     float(np.percentile(data, 25)),
-        "q3":     float(np.percentile(data, 75)),
-    }
- 
-groups = {
-    "SDN Failure":   sdn_fail,
-    "SDN Recovery":  sdn_rec,
-    "OSPF Failure":  ospf_fail,
-    "OSPF Recovery": ospf_rec,
-}
- 
-print("=" * 65)
-print(f"{'Metric':<20} {'Mean':>8} {'Median':>8} {'StDev':>8} {'Min':>8} {'Max':>8}")
-print("=" * 65)
-for name, data in groups.items():
-    d = describe(data, name)
-    print(f"{name:<20} {d['mean']:>8.2f} {d['median']:>8.2f} "
-          f"{d['stdev']:>8.2f} {d['min']:>8.2f} {d['max']:>8.2f}")
-print()
- 
-# ── Outlier identification (> mean + 2*stdev) ─────────────────────────────────
- 
-print("Outlier check (> mean + 2 SD):")
-for name, data in groups.items():
-    m, s = statistics.mean(data), statistics.stdev(data)
-    threshold = m + 2 * s
-    outliers = [(i + 1, v) for i, v in enumerate(data) if v > threshold]
-    if outliers:
-        print(f"  {name}: {outliers}")
-    else:
-        print(f"  {name}: none")
-print()
- 
-# ── Mann-Whitney U tests ──────────────────────────────────────────────────────
- 
-mw_fail = stats.mannwhitneyu(sdn_fail, ospf_fail, alternative="two-sided")
-mw_rec  = stats.mannwhitneyu(sdn_rec,  ospf_rec,  alternative="two-sided")
- 
-print("Mann-Whitney U tests (two-sided):")
-print(f"  Failure convergence : U={mw_fail.statistic:.1f}, p={mw_fail.pvalue:.2e}")
-print(f"  Recovery convergence: U={mw_rec.statistic:.1f},  p={mw_rec.pvalue:.2e}")
-print()
- 
-# ── Effect size (rank-biserial correlation) ───────────────────────────────────
- 
-def rank_biserial(u, n1, n2):
-    return 1 - (2 * u) / (n1 * n2)
- 
-n = len(sdn_fail)
-rb_fail = rank_biserial(mw_fail.statistic, n, n)
-rb_rec  = rank_biserial(mw_rec.statistic,  n, n)
-print(f"Rank-biserial effect size:")
-print(f"  Failure : r = {rb_fail:.3f}")
-print(f"  Recovery: r = {rb_rec:.3f}")
-print()
- 
-# ── Plots ─────────────────────────────────────────────────────────────────────
- 
-SDN_COLOUR  = "#2563eb"   # blue
-OSPF_COLOUR = "#dc2626"   # red
-ALPHA       = 0.85
- 
-fig, axes = plt.subplots(1, 3, figsize=(16, 6))
-fig.suptitle(
-    "Convergence Comparison: SDN (POX/OpenFlow 1.0) vs OSPF (FRRouting)",
-    fontsize=13, fontweight="bold", y=1.01
+mininet = pd.read_csv("./result/mininet/mininet_convergence_time_results.csv")
+seed = pd.read_csv("./result/seed_ie/seed_ie_convergence_time_results.csv")
+
+print(mininet.shape)
+print(seed.shape)
+
+print(mininet.head())
+print(seed.head())
+
+
+# =========================
+# CREATE OUTPUT FOLDERS
+# =========================
+
+os.makedirs("./docs/tables", exist_ok=True)
+os.makedirs("./docs/figures", exist_ok=True)
+
+
+# =========================
+# CLEAN NUMERIC COLUMNS
+# =========================
+
+for df in [mininet, seed]:
+    df["failure_ms"] = pd.to_numeric(df["failure_ms"], errors="coerce")
+    df["recovery_ms"] = pd.to_numeric(df["recovery_ms"], errors="coerce")
+
+mininet = mininet.dropna(subset=["failure_ms", "recovery_ms"])
+seed = seed.dropna(subset=["failure_ms", "recovery_ms"])
+
+
+# =========================
+# CONVERT TO LONG FORMAT
+# =========================
+
+mininet_long = pd.DataFrame({
+    "Platform": ["Mininet"] * len(mininet) * 2,
+    "Event": ["Failure"] * len(mininet) + ["Recovery"] * len(mininet),
+    "Convergence_ms": list(mininet["failure_ms"]) + list(mininet["recovery_ms"])
+})
+
+seed_long = pd.DataFrame({
+    "Platform": ["SEED IE"] * len(seed) * 2,
+    "Event": ["Failure"] * len(seed) + ["Recovery"] * len(seed),
+    "Convergence_ms": list(seed["failure_ms"]) + list(seed["recovery_ms"])
+})
+
+combined = pd.concat([mininet_long, seed_long], ignore_index=True)
+
+
+# =========================
+# TABLE 1: CONVERGENCE COMPARISON TABLE
+# =========================
+
+convergence_table = (
+    combined
+    .groupby(["Event", "Platform"])
+    .agg(
+        Samples=("Convergence_ms", "count"),
+        Min_ms=("Convergence_ms", "min"),
+        Max_ms=("Convergence_ms", "max"),
+        Mean_ms=("Convergence_ms", "mean"),
+        Median_ms=("Convergence_ms", "median"),
+        Std_Dev_ms=("Convergence_ms", "std")
+    )
+    .reset_index()
+    .round(3)
 )
- 
-iterations = list(range(1, n + 1))
- 
-# ── Plot 1: Failure convergence over iterations ───────────────────────────────
-ax1 = axes[0]
-ax1.plot(iterations, sdn_fail,  color=SDN_COLOUR,  linewidth=1.2,
-         label="SDN failure",  alpha=ALPHA)
-ax1.plot(iterations, ospf_fail, color=OSPF_COLOUR, linewidth=1.2,
-         label="OSPF failure", alpha=ALPHA)
-ax1.axhline(statistics.mean(sdn_fail),  color=SDN_COLOUR,
-            linestyle="--", linewidth=1.0, alpha=0.6)
-ax1.axhline(statistics.mean(ospf_fail), color=OSPF_COLOUR,
-            linestyle="--", linewidth=1.0, alpha=0.6)
-ax1.set_title("Failure Convergence per Iteration")
-ax1.set_xlabel("Iteration")
-ax1.set_ylabel("Time (ms)")
-ax1.legend(fontsize=9)
-ax1.grid(True, alpha=0.3)
- 
-# ── Plot 2: Recovery convergence over iterations ──────────────────────────────
-ax2 = axes[1]
-ax2.plot(iterations, sdn_rec,  color=SDN_COLOUR,  linewidth=1.2,
-         label="SDN recovery",  alpha=ALPHA)
-ax2.plot(iterations, ospf_rec, color=OSPF_COLOUR, linewidth=1.2,
-         label="OSPF recovery", alpha=ALPHA)
-ax2.axhline(statistics.mean(sdn_rec),  color=SDN_COLOUR,
-            linestyle="--", linewidth=1.0, alpha=0.6)
-ax2.axhline(statistics.mean(ospf_rec), color=OSPF_COLOUR,
-            linestyle="--", linewidth=1.0, alpha=0.6)
-ax2.set_title("Recovery Convergence per Iteration")
-ax2.set_xlabel("Iteration")
-ax2.set_ylabel("Time (ms)")
-ax2.legend(fontsize=9)
-ax2.grid(True, alpha=0.3)
- 
-# ── Plot 3: Box plots for all four groups ─────────────────────────────────────
-ax3 = axes[2]
-bp_data   = [sdn_fail, sdn_rec, ospf_fail, ospf_rec]
-bp_labels = ["SDN\nFailure", "SDN\nRecovery", "OSPF\nFailure", "OSPF\nRecovery"]
-bp_colours = [SDN_COLOUR, SDN_COLOUR, OSPF_COLOUR, OSPF_COLOUR]
- 
-bp = ax3.boxplot(bp_data, patch_artist=True, notch=False,
-                 medianprops=dict(color="white", linewidth=2))
-for patch, colour in zip(bp["boxes"], bp_colours):
-    patch.set_facecolor(colour)
-    patch.set_alpha(0.7)
- 
-ax3.set_xticklabels(bp_labels, fontsize=9)
-ax3.set_title("Distribution Comparison (Box Plot)")
-ax3.set_ylabel("Time (ms)")
-ax3.grid(True, axis="y", alpha=0.3)
- 
-sdn_patch  = mpatches.Patch(color=SDN_COLOUR,  alpha=0.7, label="SDN")
-ospf_patch = mpatches.Patch(color=OSPF_COLOUR, alpha=0.7, label="OSPF")
-ax3.legend(handles=[sdn_patch, ospf_patch], fontsize=9)
- 
+
+event_order = {"Failure": 1, "Recovery": 2}
+platform_order = {"Mininet": 1, "SEED IE": 2}
+
+convergence_table["event_order"] = convergence_table["Event"].map(event_order)
+convergence_table["platform_order"] = convergence_table["Platform"].map(platform_order)
+
+convergence_table = (
+    convergence_table
+    .sort_values(["event_order", "platform_order"])
+    .drop(columns=["event_order", "platform_order"])
+)
+
+print("\nCONVERGENCE COMPARISON TABLE")
+print(convergence_table)
+
+convergence_table.to_csv(
+    "./docs/tables/convergence_comparison_table.csv",
+    index=False
+)
+
+
+# =========================
+# TABLE 2: STATISTICAL SUMMARY
+# =========================
+
+def format_p(p):
+    return "<0.0001" if p < 0.0001 else f"{p:.4f}"
+
+def interpret_effect(r):
+    if abs(r) >= 0.8:
+        return "Strong distributional separation"
+    elif abs(r) >= 0.5:
+        return "Moderate distributional separation"
+    else:
+        return "Weak distributional separation"
+
+def rank_biserial(x, y):
+    u_stat, p_mw = mannwhitneyu(x, y, alternative="two-sided")
+    n1 = len(x)
+    n2 = len(y)
+    r_rb = (2 * u_stat) / (n1 * n2) - 1
+    return u_stat, p_mw, r_rb
+
+stats_rows = []
+
+for event, mininet_col, seed_col in [
+    ("Failure convergence", "failure_ms", "failure_ms"),
+    ("Recovery convergence", "recovery_ms", "recovery_ms")
+]:
+    mininet_vals = mininet[mininet_col].dropna()
+    seed_vals = seed[seed_col].dropna()
+
+    u_stat, p_mw, r_rb = rank_biserial(mininet_vals, seed_vals)
+
+    t_stat, p_t = ttest_ind(
+        mininet_vals,
+        seed_vals,
+        equal_var=False
+    )
+
+    stats_rows.append({
+        "Metric": event,
+        "p (Mann–Whitney)": format_p(p_mw),
+        "p (Welch t-test)": format_p(p_t),
+        "Effect Size (r_rb)": round(r_rb, 3),
+        "Interpretation": interpret_effect(r_rb)
+    })
+
+stats_table = pd.DataFrame(stats_rows)
+
+print("\nCONVERGENCE STATISTICAL SUMMARY")
+print(stats_table)
+
+stats_table.to_csv(
+    "./docs/tables/convergence_statistical_summary.csv",
+    index=False
+)
+
+
+# =========================
+# BAR CHART: MEAN CONVERGENCE TIME
+# =========================
+
+plot_data = convergence_table.pivot(
+    index="Event",
+    columns="Platform",
+    values="Mean_ms"
+).loc[["Failure", "Recovery"]]
+
+plot_data.plot(kind="bar", figsize=(8, 5))
+
+plt.xlabel("Convergence Event")
+plt.ylabel("Mean Convergence Time (ms)")
+plt.title("Mean Convergence Time Comparison")
+plt.xticks(rotation=0)
 plt.tight_layout()
-out_path = "convergence_comparison.png"
-plt.savefig(out_path, dpi=150, bbox_inches="tight")
-print(f"Plot saved to: {out_path}")
-plt.close()
+
+plt.savefig(
+    "./docs/figures/convergence_mean_bar_chart.png",
+    dpi=300
+)
+
+plt.show()
+
+
+# =========================
+# BOX PLOT: DISTRIBUTION COMPARISON
+# =========================
+
+box_data = [
+    mininet["failure_ms"],
+    seed["failure_ms"],
+    mininet["recovery_ms"],
+    seed["recovery_ms"]
+]
+
+box_labels = [
+    "Mininet\nFailure",
+    "SEED IE\nFailure",
+    "Mininet\nRecovery",
+    "SEED IE\nRecovery"
+]
+
+plt.figure(figsize=(9, 5))
+plt.boxplot(box_data, labels=box_labels)
+
+plt.ylabel("Convergence Time (ms)")
+plt.title("Convergence Time Distribution Comparison")
+plt.tight_layout()
+
+plt.savefig(
+    "./docs/figures/convergence_box_plot.png",
+    dpi=300
+)
+
+plt.show()

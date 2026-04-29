@@ -1,0 +1,433 @@
+version: "3.4"
+services:
+    39e016aa9e819f203ebc1809245a5818:
+        build:
+            context: .
+            dockerfile: dummies/39e016aa9e819f203ebc1809245a5818
+        image: 39e016aa9e819f203ebc1809245a5818
+
+
+    rnode_100_sr1:
+        build: ./rnode_100_sr1
+        container_name: as100r-sr1-10.0.12.254
+        depends_on:
+            - 39e016aa9e819f203ebc1809245a5818
+        cap_add:
+            - ALL
+
+        privileged: true
+        networks:
+            net_100_net12:
+                ipv4_address: 10.0.12.254
+
+            net_100_net61:
+                ipv4_address: 10.0.61.254
+
+            net_100_netext:
+                ipv4_address: 10.0.200.254
+
+            net_100_sr1test:
+                ipv4_address: 10.200.1.10
+
+
+        labels:
+            org.seedsecuritylabs.seedemu.meta.asn: "100"
+            org.seedsecuritylabs.seedemu.meta.nodename: "sr1"
+            org.seedsecuritylabs.seedemu.meta.role: "Router"
+            org.seedsecuritylabs.seedemu.meta.loopback_addr: "10.0.0.1"
+            org.seedsecuritylabs.seedemu.meta.net.0.name: "net12"
+            org.seedsecuritylabs.seedemu.meta.net.0.address: "10.0.12.254/24"
+            org.seedsecuritylabs.seedemu.meta.net.1.name: "net61"
+            org.seedsecuritylabs.seedemu.meta.net.1.address: "10.0.61.254/24"
+            org.seedsecuritylabs.seedemu.meta.net.2.name: "netext"
+            org.seedsecuritylabs.seedemu.meta.net.2.address: "10.0.200.254/24"
+            org.seedsecuritylabs.seedemu.meta.net.3.name: "sr1test"
+            org.seedsecuritylabs.seedemu.meta.net.3.address: "10.200.1.10/24"
+
+        environment:
+            - CONTAINER_NAME=as100r-sr1-10.0.12.254
+            
+    rnode_100_sr2:
+        build: ./rnode_100_sr2
+        container_name: as100r-sr2-10.0.12.253
+        depends_on:
+            - 39e016aa9e819f203ebc1809245a5818
+        cap_add:
+            - ALL
+
+        privileged: true
+        networks:
+            net_100_net12:
+                ipv4_address: 10.0.12.253
+
+            net_100_net23:
+                ipv4_address: 10.0.23.254
+
+            net_100_sr2test:
+                ipv4_address: 10.200.2.10
+
+
+        labels:
+            org.seedsecuritylabs.seedemu.meta.asn: "100"
+            org.seedsecuritylabs.seedemu.meta.nodename: "sr2"
+            org.seedsecuritylabs.seedemu.meta.role: "Router"
+            org.seedsecuritylabs.seedemu.meta.loopback_addr: "10.0.0.2"
+            org.seedsecuritylabs.seedemu.meta.net.0.name: "net12"
+            org.seedsecuritylabs.seedemu.meta.net.0.address: "10.0.12.253/24"
+            org.seedsecuritylabs.seedemu.meta.net.1.name: "net23"
+            org.seedsecuritylabs.seedemu.meta.net.1.address: "10.0.23.254/24"
+            org.seedsecuritylabs.seedemu.meta.net.2.name: "sr2test"
+            org.seedsecuritylabs.seedemu.meta.net.2.address: "10.200.2.10/24"
+
+        environment:
+            - CONTAINER_NAME=as100r-sr2-10.0.12.253
+            
+    rnode_100_sr3:
+        build: ./rnode_100_sr3
+        container_name: as100r-sr3-10.0.23.253
+        depends_on:
+            - 39e016aa9e819f203ebc1809245a5818
+        cap_add:
+            - ALL
+
+        privileged: true
+        networks:
+            net_100_net23:
+                ipv4_address: 10.0.23.253
+
+            net_100_net34:
+                ipv4_address: 10.0.34.254
+
+            net_100_sr3test:
+                ipv4_address: 10.200.3.10
+
+
+        labels:
+            org.seedsecuritylabs.seedemu.meta.asn: "100"
+            org.seedsecuritylabs.seedemu.meta.nodename: "sr3"
+            org.seedsecuritylabs.seedemu.meta.role: "Router"
+            org.seedsecuritylabs.seedemu.meta.loopback_addr: "10.0.0.3"
+            org.seedsecuritylabs.seedemu.meta.net.0.name: "net23"
+            org.seedsecuritylabs.seedemu.meta.net.0.address: "10.0.23.253/24"
+            org.seedsecuritylabs.seedemu.meta.net.1.name: "net34"
+            org.seedsecuritylabs.seedemu.meta.net.1.address: "10.0.34.254/24"
+            org.seedsecuritylabs.seedemu.meta.net.2.name: "sr3test"
+            org.seedsecuritylabs.seedemu.meta.net.2.address: "10.200.3.10/24"
+
+        environment:
+            - CONTAINER_NAME=as100r-sr3-10.0.23.253
+            
+    rnode_100_sr4:
+        build: ./rnode_100_sr4
+        container_name: as100r-sr4-10.0.34.253
+        depends_on:
+            - 39e016aa9e819f203ebc1809245a5818
+        cap_add:
+            - ALL
+
+        privileged: true
+        networks:
+            net_100_net34:
+                ipv4_address: 10.0.34.253
+
+            net_100_net45:
+                ipv4_address: 10.0.45.254
+
+            net_100_sr4test:
+                ipv4_address: 10.200.4.10
+
+
+        labels:
+            org.seedsecuritylabs.seedemu.meta.asn: "100"
+            org.seedsecuritylabs.seedemu.meta.nodename: "sr4"
+            org.seedsecuritylabs.seedemu.meta.role: "Router"
+            org.seedsecuritylabs.seedemu.meta.loopback_addr: "10.0.0.4"
+            org.seedsecuritylabs.seedemu.meta.net.0.name: "net34"
+            org.seedsecuritylabs.seedemu.meta.net.0.address: "10.0.34.253/24"
+            org.seedsecuritylabs.seedemu.meta.net.1.name: "net45"
+            org.seedsecuritylabs.seedemu.meta.net.1.address: "10.0.45.254/24"
+            org.seedsecuritylabs.seedemu.meta.net.2.name: "sr4test"
+            org.seedsecuritylabs.seedemu.meta.net.2.address: "10.200.4.10/24"
+
+        environment:
+            - CONTAINER_NAME=as100r-sr4-10.0.34.253
+            
+    rnode_100_sr5:
+        build: ./rnode_100_sr5
+        container_name: as100r-sr5-10.0.45.253
+        depends_on:
+            - 39e016aa9e819f203ebc1809245a5818
+        cap_add:
+            - ALL
+
+        privileged: true
+        networks:
+            net_100_net45:
+                ipv4_address: 10.0.45.253
+
+            net_100_net56:
+                ipv4_address: 10.0.56.254
+
+            net_100_sr5test:
+                ipv4_address: 10.200.5.10
+
+
+        labels:
+            org.seedsecuritylabs.seedemu.meta.asn: "100"
+            org.seedsecuritylabs.seedemu.meta.nodename: "sr5"
+            org.seedsecuritylabs.seedemu.meta.role: "Router"
+            org.seedsecuritylabs.seedemu.meta.loopback_addr: "10.0.0.5"
+            org.seedsecuritylabs.seedemu.meta.net.0.name: "net45"
+            org.seedsecuritylabs.seedemu.meta.net.0.address: "10.0.45.253/24"
+            org.seedsecuritylabs.seedemu.meta.net.1.name: "net56"
+            org.seedsecuritylabs.seedemu.meta.net.1.address: "10.0.56.254/24"
+            org.seedsecuritylabs.seedemu.meta.net.2.name: "sr5test"
+            org.seedsecuritylabs.seedemu.meta.net.2.address: "10.200.5.10/24"
+
+        environment:
+            - CONTAINER_NAME=as100r-sr5-10.0.45.253
+            
+    rnode_100_sr6:
+        build: ./rnode_100_sr6
+        container_name: as100r-sr6-10.0.56.253
+        depends_on:
+            - 39e016aa9e819f203ebc1809245a5818
+        cap_add:
+            - ALL
+
+        privileged: true
+        networks:
+            net_100_net56:
+                ipv4_address: 10.0.56.253
+
+            net_100_net61:
+                ipv4_address: 10.0.61.253
+
+            net_100_sr6test:
+                ipv4_address: 10.200.6.10
+
+
+        labels:
+            org.seedsecuritylabs.seedemu.meta.asn: "100"
+            org.seedsecuritylabs.seedemu.meta.nodename: "sr6"
+            org.seedsecuritylabs.seedemu.meta.role: "Router"
+            org.seedsecuritylabs.seedemu.meta.loopback_addr: "10.0.0.6"
+            org.seedsecuritylabs.seedemu.meta.net.0.name: "net56"
+            org.seedsecuritylabs.seedemu.meta.net.0.address: "10.0.56.253/24"
+            org.seedsecuritylabs.seedemu.meta.net.1.name: "net61"
+            org.seedsecuritylabs.seedemu.meta.net.1.address: "10.0.61.253/24"
+            org.seedsecuritylabs.seedemu.meta.net.2.name: "sr6test"
+            org.seedsecuritylabs.seedemu.meta.net.2.address: "10.200.6.10/24"
+
+        environment:
+            - CONTAINER_NAME=as100r-sr6-10.0.56.253
+            
+    rnode_100_rw-mininet-gateway:
+        build: ./rnode_100_rw-mininet-gateway
+        container_name: as100r-rw-mininet-gateway-10.0.200.253
+        depends_on:
+            - 39e016aa9e819f203ebc1809245a5818
+        cap_add:
+            - ALL
+
+        privileged: true
+        networks:
+            net_100_netext:
+                ipv4_address: 10.0.200.253
+
+            000_svc:
+                ipv4_address: 192.168.66.254
+
+
+        labels:
+            org.seedsecuritylabs.seedemu.meta.asn: "100"
+            org.seedsecuritylabs.seedemu.meta.nodename: "rw-mininet-gateway"
+            org.seedsecuritylabs.seedemu.meta.role: "Router"
+            org.seedsecuritylabs.seedemu.meta.loopback_addr: "10.0.0.7"
+            org.seedsecuritylabs.seedemu.meta.net.0.name: "netext"
+            org.seedsecuritylabs.seedemu.meta.net.0.address: "10.0.200.253/24"
+            org.seedsecuritylabs.seedemu.meta.net.1.name: "000_svc"
+            org.seedsecuritylabs.seedemu.meta.net.1.address: "192.168.66.254/24"
+
+        environment:
+            - CONTAINER_NAME=as100r-rw-mininet-gateway-10.0.200.253
+            
+    seedemu_internet_map:
+        image: handsonsecurity/seedemu-internetmap:2.0
+        container_name: seedemu_internet_map
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        privileged: true
+        ports:
+            - 8080:8080/tcp
+
+
+networks:
+    000_svc:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 192.168.66.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.dummy: "dummy label for hidden node/net"
+
+    net_100_net12:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.0.12.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "net12"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.0.12.0/24"
+
+    net_100_net23:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.0.23.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "net23"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.0.23.0/24"
+
+    net_100_net34:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.0.34.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "net34"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.0.34.0/24"
+
+    net_100_net45:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.0.45.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "net45"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.0.45.0/24"
+
+    net_100_net56:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.0.56.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "net56"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.0.56.0/24"
+
+    net_100_net61:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.0.61.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "net61"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.0.61.0/24"
+
+    net_100_netext:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.0.200.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "netext"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.0.200.0/24"
+
+    net_100_sr1test:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.200.1.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "sr1test"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.200.1.0/24"
+
+    net_100_sr2test:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.200.2.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "sr2test"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.200.2.0/24"
+
+    net_100_sr3test:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.200.3.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "sr3test"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.200.3.0/24"
+
+    net_100_sr4test:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.200.4.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "sr4test"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.200.4.0/24"
+
+    net_100_sr5test:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.200.5.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "sr5test"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.200.5.0/24"
+
+    net_100_sr6test:
+        driver_opts:
+            com.docker.network.driver.mtu: 1500
+        ipam:
+            config:
+                - subnet: 10.200.6.0/24
+        labels:
+            org.seedsecuritylabs.seedemu.meta.type: "local"
+            org.seedsecuritylabs.seedemu.meta.scope: "100"
+            org.seedsecuritylabs.seedemu.meta.name: "sr6test"
+            org.seedsecuritylabs.seedemu.meta.prefix: "10.200.6.0/24"
+
+
+
+

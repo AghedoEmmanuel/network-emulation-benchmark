@@ -1,521 +1,521 @@
 {
-  "timestamp": "2026-04-24T14:42:56.196893",
+  "timestamp": "2026-04-27T23:16:47.371054",
   "iterations_requested": 100,
   "iterations_completed": 100,
   "raw_runs": [
     {
       "iteration": 1,
-      "failure_ms": 50.555,
-      "recovery_ms": 36.393
+      "failure_ms": 53.712,
+      "recovery_ms": 29.861
     },
     {
       "iteration": 2,
-      "failure_ms": 48.11,
-      "recovery_ms": 52.484
+      "failure_ms": 34.668,
+      "recovery_ms": 31.838
     },
     {
       "iteration": 3,
-      "failure_ms": 37.124,
-      "recovery_ms": 38.769
+      "failure_ms": 30.772,
+      "recovery_ms": 33.066
     },
     {
       "iteration": 4,
-      "failure_ms": 35.781,
-      "recovery_ms": 30.794
+      "failure_ms": 48.59,
+      "recovery_ms": 50.489
     },
     {
       "iteration": 5,
-      "failure_ms": 32.015,
-      "recovery_ms": 53.417
+      "failure_ms": 46.952,
+      "recovery_ms": 40.077
     },
     {
       "iteration": 6,
-      "failure_ms": 34.656,
-      "recovery_ms": 38.928
+      "failure_ms": 28.218,
+      "recovery_ms": 56.348
     },
     {
       "iteration": 7,
-      "failure_ms": 32.018,
-      "recovery_ms": 39.37
+      "failure_ms": 30.75,
+      "recovery_ms": 35.404
     },
     {
       "iteration": 8,
-      "failure_ms": 39.977,
-      "recovery_ms": 44.738
+      "failure_ms": 41.271,
+      "recovery_ms": 35.458
     },
     {
       "iteration": 9,
-      "failure_ms": 28.881,
-      "recovery_ms": 43.357
+      "failure_ms": 34.884,
+      "recovery_ms": 36.252
     },
     {
       "iteration": 10,
-      "failure_ms": 41.107,
-      "recovery_ms": 45.55
+      "failure_ms": 32.186,
+      "recovery_ms": 46.838
     },
     {
       "iteration": 11,
-      "failure_ms": 33.854,
-      "recovery_ms": 43.076
+      "failure_ms": 34.832,
+      "recovery_ms": 31.207
     },
     {
       "iteration": 12,
-      "failure_ms": 29.762,
-      "recovery_ms": 35.161
+      "failure_ms": 40.786,
+      "recovery_ms": 54.089
     },
     {
       "iteration": 13,
-      "failure_ms": 28.511,
-      "recovery_ms": 40.497
+      "failure_ms": 55.091,
+      "recovery_ms": 45.623
     },
     {
       "iteration": 14,
-      "failure_ms": 40.72,
-      "recovery_ms": 37.618
+      "failure_ms": 44.502,
+      "recovery_ms": 57.749
     },
     {
       "iteration": 15,
-      "failure_ms": 37.868,
-      "recovery_ms": 46.641
+      "failure_ms": 40.157,
+      "recovery_ms": 31.223
     },
     {
       "iteration": 16,
-      "failure_ms": 37.388,
-      "recovery_ms": 44.014
+      "failure_ms": 54.336,
+      "recovery_ms": 38.028
     },
     {
       "iteration": 17,
-      "failure_ms": 37.813,
-      "recovery_ms": 44.964
+      "failure_ms": 41.504,
+      "recovery_ms": 60.452
     },
     {
       "iteration": 18,
-      "failure_ms": 45.084,
-      "recovery_ms": 41.043
+      "failure_ms": 62.696,
+      "recovery_ms": 40.794
     },
     {
       "iteration": 19,
-      "failure_ms": 38.809,
-      "recovery_ms": 44.188
+      "failure_ms": 60.72,
+      "recovery_ms": 43.529
     },
     {
       "iteration": 20,
-      "failure_ms": 40.767,
-      "recovery_ms": 45.356
+      "failure_ms": 40.766,
+      "recovery_ms": 36.124
     },
     {
       "iteration": 21,
-      "failure_ms": 38.202,
-      "recovery_ms": 35.785
+      "failure_ms": 40.418,
+      "recovery_ms": 37.631
     },
     {
       "iteration": 22,
-      "failure_ms": 34.611,
-      "recovery_ms": 26.167
+      "failure_ms": 36.321,
+      "recovery_ms": 41.633
     },
     {
       "iteration": 23,
-      "failure_ms": 32.639,
-      "recovery_ms": 38.119
+      "failure_ms": 31.123,
+      "recovery_ms": 32.211
     },
     {
       "iteration": 24,
-      "failure_ms": 30.997,
-      "recovery_ms": 37.553
+      "failure_ms": 28.792,
+      "recovery_ms": 42.515
     },
     {
       "iteration": 25,
-      "failure_ms": 52.5,
-      "recovery_ms": 47.043
+      "failure_ms": 51.669,
+      "recovery_ms": 33.004
     },
     {
       "iteration": 26,
-      "failure_ms": 38.383,
-      "recovery_ms": 59.311
+      "failure_ms": 50.705,
+      "recovery_ms": 33.959
     },
     {
       "iteration": 27,
-      "failure_ms": 43.345,
-      "recovery_ms": 39.26
+      "failure_ms": 39.547,
+      "recovery_ms": 40.399
     },
     {
       "iteration": 28,
-      "failure_ms": 42.455,
-      "recovery_ms": 46.272
+      "failure_ms": 46.779,
+      "recovery_ms": 34.567
     },
     {
       "iteration": 29,
-      "failure_ms": 39.095,
-      "recovery_ms": 35.003
+      "failure_ms": 37.147,
+      "recovery_ms": 47.375
     },
     {
       "iteration": 30,
-      "failure_ms": 42.13,
-      "recovery_ms": 29.061
+      "failure_ms": 35.882,
+      "recovery_ms": 40.689
     },
     {
       "iteration": 31,
-      "failure_ms": 33.365,
-      "recovery_ms": 46.484
+      "failure_ms": 27.748,
+      "recovery_ms": 29.581
     },
     {
       "iteration": 32,
-      "failure_ms": 49.633,
-      "recovery_ms": 34.899
+      "failure_ms": 35.029,
+      "recovery_ms": 27.798
     },
     {
       "iteration": 33,
-      "failure_ms": 33.736,
-      "recovery_ms": 42.458
+      "failure_ms": 55.864,
+      "recovery_ms": 36.531
     },
     {
       "iteration": 34,
-      "failure_ms": 62.109,
-      "recovery_ms": 38.537
+      "failure_ms": 48.516,
+      "recovery_ms": 44.85
     },
     {
       "iteration": 35,
-      "failure_ms": 40.214,
-      "recovery_ms": 41.998
+      "failure_ms": 54.78,
+      "recovery_ms": 45.18
     },
     {
       "iteration": 36,
-      "failure_ms": 38.61,
-      "recovery_ms": 40.944
+      "failure_ms": 43.154,
+      "recovery_ms": 65.944
     },
     {
       "iteration": 37,
-      "failure_ms": 43.58,
-      "recovery_ms": 28.898
+      "failure_ms": 46.177,
+      "recovery_ms": 46.756
     },
     {
       "iteration": 38,
-      "failure_ms": 36.238,
-      "recovery_ms": 39.802
+      "failure_ms": 37.665,
+      "recovery_ms": 40.575
     },
     {
       "iteration": 39,
-      "failure_ms": 43.118,
-      "recovery_ms": 38.061
+      "failure_ms": 45.845,
+      "recovery_ms": 35.203
     },
     {
       "iteration": 40,
-      "failure_ms": 36.829,
-      "recovery_ms": 41.095
+      "failure_ms": 32.014,
+      "recovery_ms": 50.081
     },
     {
       "iteration": 41,
-      "failure_ms": 28.575,
-      "recovery_ms": 36.622
+      "failure_ms": 36.698,
+      "recovery_ms": 40.335
     },
     {
       "iteration": 42,
-      "failure_ms": 34.054,
-      "recovery_ms": 36.254
+      "failure_ms": 51.717,
+      "recovery_ms": 46.877
     },
     {
       "iteration": 43,
-      "failure_ms": 30.613,
-      "recovery_ms": 30.826
+      "failure_ms": 33.429,
+      "recovery_ms": 39.72
     },
     {
       "iteration": 44,
-      "failure_ms": 30.074,
-      "recovery_ms": 41.501
+      "failure_ms": 37.399,
+      "recovery_ms": 32.246
     },
     {
       "iteration": 45,
-      "failure_ms": 40.754,
-      "recovery_ms": 25.477
+      "failure_ms": 30.745,
+      "recovery_ms": 38.323
     },
     {
       "iteration": 46,
-      "failure_ms": 27.012,
-      "recovery_ms": 26.376
+      "failure_ms": 59.068,
+      "recovery_ms": 42.597
     },
     {
       "iteration": 47,
-      "failure_ms": 42.067,
-      "recovery_ms": 41.069
+      "failure_ms": 44.928,
+      "recovery_ms": 48.885
     },
     {
       "iteration": 48,
-      "failure_ms": 34.569,
-      "recovery_ms": 42.772
+      "failure_ms": 29.869,
+      "recovery_ms": 39.973
     },
     {
       "iteration": 49,
-      "failure_ms": 37.815,
-      "recovery_ms": 30.647
+      "failure_ms": 37.367,
+      "recovery_ms": 28.997
     },
     {
       "iteration": 50,
-      "failure_ms": 32.505,
-      "recovery_ms": 38.52
+      "failure_ms": 53.419,
+      "recovery_ms": 75.214
     },
     {
       "iteration": 51,
-      "failure_ms": 33.723,
-      "recovery_ms": 41.174
+      "failure_ms": 65.778,
+      "recovery_ms": 49.608
     },
     {
       "iteration": 52,
-      "failure_ms": 40.432,
-      "recovery_ms": 36.76
+      "failure_ms": 27.081,
+      "recovery_ms": 28.02
     },
     {
       "iteration": 53,
-      "failure_ms": 38.804,
-      "recovery_ms": 37.317
+      "failure_ms": 35.516,
+      "recovery_ms": 42.344
     },
     {
       "iteration": 54,
-      "failure_ms": 42.918,
-      "recovery_ms": 51.036
+      "failure_ms": 67.274,
+      "recovery_ms": 32.411
     },
     {
       "iteration": 55,
-      "failure_ms": 38.544,
-      "recovery_ms": 29.243
+      "failure_ms": 45.845,
+      "recovery_ms": 33.297
     },
     {
       "iteration": 56,
-      "failure_ms": 32.146,
-      "recovery_ms": 35.044
+      "failure_ms": 35.835,
+      "recovery_ms": 39.784
     },
     {
       "iteration": 57,
-      "failure_ms": 39.706,
-      "recovery_ms": 45.436
+      "failure_ms": 36.502,
+      "recovery_ms": 40.933
     },
     {
       "iteration": 58,
-      "failure_ms": 30.642,
-      "recovery_ms": 43.005
+      "failure_ms": 31.495,
+      "recovery_ms": 42.913
     },
     {
       "iteration": 59,
-      "failure_ms": 39.747,
-      "recovery_ms": 55.841
+      "failure_ms": 33.752,
+      "recovery_ms": 44.664
     },
     {
       "iteration": 60,
-      "failure_ms": 39.947,
-      "recovery_ms": 36.803
+      "failure_ms": 54.548,
+      "recovery_ms": 30.999
     },
     {
       "iteration": 61,
-      "failure_ms": 29.535,
-      "recovery_ms": 45.229
+      "failure_ms": 29.659,
+      "recovery_ms": 35.003
     },
     {
       "iteration": 62,
-      "failure_ms": 36.132,
-      "recovery_ms": 50.01
+      "failure_ms": 30.247,
+      "recovery_ms": 40.583
     },
     {
       "iteration": 63,
-      "failure_ms": 49.012,
-      "recovery_ms": 45.634
+      "failure_ms": 35.348,
+      "recovery_ms": 29.078
     },
     {
       "iteration": 64,
-      "failure_ms": 35.9,
-      "recovery_ms": 44.739
+      "failure_ms": 42.858,
+      "recovery_ms": 48.583
     },
     {
       "iteration": 65,
-      "failure_ms": 41.265,
-      "recovery_ms": 32.191
+      "failure_ms": 43.63,
+      "recovery_ms": 36.585
     },
     {
       "iteration": 66,
-      "failure_ms": 31.885,
-      "recovery_ms": 45.777
+      "failure_ms": 35.965,
+      "recovery_ms": 41.521
     },
     {
       "iteration": 67,
-      "failure_ms": 66.468,
-      "recovery_ms": 42.335
+      "failure_ms": 56.403,
+      "recovery_ms": 38.425
     },
     {
       "iteration": 68,
-      "failure_ms": 30.326,
-      "recovery_ms": 50.782
+      "failure_ms": 66.471,
+      "recovery_ms": 39.844
     },
     {
       "iteration": 69,
-      "failure_ms": 43.674,
-      "recovery_ms": 39.798
+      "failure_ms": 42.596,
+      "recovery_ms": 43.62
     },
     {
       "iteration": 70,
-      "failure_ms": 39.599,
-      "recovery_ms": 37.226
+      "failure_ms": 50.766,
+      "recovery_ms": 37.323
     },
     {
       "iteration": 71,
-      "failure_ms": 26.852,
-      "recovery_ms": 24.896
+      "failure_ms": 41.727,
+      "recovery_ms": 44.025
     },
     {
       "iteration": 72,
-      "failure_ms": 31.38,
-      "recovery_ms": 38.269
+      "failure_ms": 40.728,
+      "recovery_ms": 39.272
     },
     {
       "iteration": 73,
-      "failure_ms": 40.296,
-      "recovery_ms": 45.577
+      "failure_ms": 39.623,
+      "recovery_ms": 49.994
     },
     {
       "iteration": 74,
-      "failure_ms": 52.369,
-      "recovery_ms": 28.645
+      "failure_ms": 26.884,
+      "recovery_ms": 48.208
     },
     {
       "iteration": 75,
-      "failure_ms": 37.281,
-      "recovery_ms": 41.655
+      "failure_ms": 33.956,
+      "recovery_ms": 59.368
     },
     {
       "iteration": 76,
-      "failure_ms": 37.9,
-      "recovery_ms": 21.958
+      "failure_ms": 27.528,
+      "recovery_ms": 26.945
     },
     {
       "iteration": 77,
-      "failure_ms": 33.2,
-      "recovery_ms": 35.319
+      "failure_ms": 52.45,
+      "recovery_ms": 38.004
     },
     {
       "iteration": 78,
-      "failure_ms": 41.026,
-      "recovery_ms": 50.596
+      "failure_ms": 28.521,
+      "recovery_ms": 39.849
     },
     {
       "iteration": 79,
-      "failure_ms": 37.198,
-      "recovery_ms": 34.75
+      "failure_ms": 48.824,
+      "recovery_ms": 38.841
     },
     {
       "iteration": 80,
-      "failure_ms": 35.34,
-      "recovery_ms": 53.069
+      "failure_ms": 36.885,
+      "recovery_ms": 24.369
     },
     {
       "iteration": 81,
-      "failure_ms": 30.272,
-      "recovery_ms": 47.01
+      "failure_ms": 32.188,
+      "recovery_ms": 43.732
     },
     {
       "iteration": 82,
-      "failure_ms": 40.621,
-      "recovery_ms": 40.299
+      "failure_ms": 27.751,
+      "recovery_ms": 36.61
     },
     {
       "iteration": 83,
-      "failure_ms": 36.669,
-      "recovery_ms": 39.012
+      "failure_ms": 29.593,
+      "recovery_ms": 33.118
     },
     {
       "iteration": 84,
-      "failure_ms": 46.007,
-      "recovery_ms": 39.637
+      "failure_ms": 63.466,
+      "recovery_ms": 35.482
     },
     {
       "iteration": 85,
-      "failure_ms": 40.649,
-      "recovery_ms": 47.39
+      "failure_ms": 49.163,
+      "recovery_ms": 28.131
     },
     {
       "iteration": 86,
-      "failure_ms": 43.213,
-      "recovery_ms": 35.19
+      "failure_ms": 53.21,
+      "recovery_ms": 35.517
     },
     {
       "iteration": 87,
-      "failure_ms": 43.1,
-      "recovery_ms": 40.131
+      "failure_ms": 34.795,
+      "recovery_ms": 32.328
     },
     {
       "iteration": 88,
-      "failure_ms": 43.184,
-      "recovery_ms": 49.124
+      "failure_ms": 38.999,
+      "recovery_ms": 35.976
     },
     {
       "iteration": 89,
-      "failure_ms": 38.635,
-      "recovery_ms": 53.427
+      "failure_ms": 32.823,
+      "recovery_ms": 39.029
     },
     {
       "iteration": 90,
-      "failure_ms": 33.014,
-      "recovery_ms": 38.966
+      "failure_ms": 48.517,
+      "recovery_ms": 39.475
     },
     {
       "iteration": 91,
-      "failure_ms": 30.955,
-      "recovery_ms": 35.707
+      "failure_ms": 54.428,
+      "recovery_ms": 35.307
     },
     {
       "iteration": 92,
-      "failure_ms": 31.647,
-      "recovery_ms": 50.188
+      "failure_ms": 33.046,
+      "recovery_ms": 40.41
     },
     {
       "iteration": 93,
-      "failure_ms": 32.277,
-      "recovery_ms": 44.555
+      "failure_ms": 36.802,
+      "recovery_ms": 30.092
     },
     {
       "iteration": 94,
-      "failure_ms": 34.33,
-      "recovery_ms": 35.0
+      "failure_ms": 40.291,
+      "recovery_ms": 39.362
     },
     {
       "iteration": 95,
-      "failure_ms": 39.927,
-      "recovery_ms": 37.649
+      "failure_ms": 56.316,
+      "recovery_ms": 40.988
     },
     {
       "iteration": 96,
-      "failure_ms": 42.796,
-      "recovery_ms": 38.596
+      "failure_ms": 34.298,
+      "recovery_ms": 46.606
     },
     {
       "iteration": 97,
-      "failure_ms": 45.729,
-      "recovery_ms": 34.185
+      "failure_ms": 40.249,
+      "recovery_ms": 27.172
     },
     {
       "iteration": 98,
-      "failure_ms": 43.352,
-      "recovery_ms": 46.295
+      "failure_ms": 39.421,
+      "recovery_ms": 30.446
     },
     {
       "iteration": 99,
-      "failure_ms": 47.944,
-      "recovery_ms": 32.482
+      "failure_ms": 34.133,
+      "recovery_ms": 29.914
     },
     {
       "iteration": 100,
-      "failure_ms": 37.067,
-      "recovery_ms": 43.843
+      "failure_ms": 33.008,
+      "recovery_ms": 36.279
     }
   ],
   "summary": {
     "failure_ms": {
       "count": 100,
-      "mean": 38.35262,
-      "min": 26.852,
-      "max": 66.468
+      "mean": 41.54399,
+      "min": 26.884,
+      "max": 67.274
     },
     "recovery_ms": {
       "count": 100,
-      "mean": 40.31972,
-      "min": 21.958,
-      "max": 59.311
+      "mean": 39.74485,
+      "min": 24.369,
+      "max": 75.214
     }
   }
 }

@@ -16,9 +16,9 @@ class LinuxRouter(Node):
 
     # def terminate(self):
         # super(LinuxRouter, self).terminate()
-        def terminate(self):
-            self.cmd('sysctl -w net.ipv4.ip_forward=0 >/dev/null')
-            super(LinuxRouter, self).terminate()
+    def terminate(self):
+        self.cmd('sysctl -w net.ipv4.ip_forward=0 >/dev/null')
+        super(LinuxRouter, self).terminate()
 
 
 class NetworkTopo(Topo):
@@ -29,12 +29,12 @@ class NetworkTopo(Topo):
         # r3 = self.addHost('r3', cls=LinuxRouter, ip='10.5.0.1/24')
         # r4 = self.addHost('r4', cls=LinuxRouter, ip='10.7.0.1/24')
         # 6-router OSPF ring aligned to SEED_Ring.py
-        r1 = self.addHost('r1', cls=LinuxRouter, ip=None)
-        r2 = self.addHost('r2', cls=LinuxRouter, ip=None)
-        r3 = self.addHost('r3', cls=LinuxRouter, ip=None)
-        r4 = self.addHost('r4', cls=LinuxRouter, ip=None)
-        r5 = self.addHost('r5', cls=LinuxRouter, ip=None)
-        r6 = self.addHost('r6', cls=LinuxRouter, ip=None)
+        r1 = self.addHost('r1', cls=LinuxRouter, ip=None, hostname='r1')
+        r2 = self.addHost('r2', cls=LinuxRouter, ip=None, hostname='r2')
+        r3 = self.addHost('r3', cls=LinuxRouter, ip=None, hostname='r3')
+        r4 = self.addHost('r4', cls=LinuxRouter, ip=None, hostname='r4')
+        r5 = self.addHost('r5', cls=LinuxRouter, ip=None, hostname='r5')
+        r6 = self.addHost('r6', cls=LinuxRouter, ip=None, hostname='r6')
 
         # Add 2 switches, two for each subnet
         # s11 = self.addSwitch('s11')
@@ -214,9 +214,27 @@ def run():
     # info(net['r3'].cmd("/usr/lib/frr/frrinit.sh stop 'r3'"))
     # info(net['r4'].cmd("/usr/lib/frr/frrinit.sh stop 'r4'"))
     
+    
+    import os 
+    os.system('sudo mkdir -p /var/run/netns')
+    for node in ('r1', 'r2', 'r3', 'r4', 'r5', 'r6'):
+        pid = net[node].pid
+        os.system(f"sudo rm -f var/run/netns/{node}")
+        os.system(f'sudo ln -sf /proc/{pid}/ns/net /var/run/netns/{node}')
+        
+    net['r1'].cmd('ip addr add 1.1.1.1/32 dev lo')
+    net['r2'].cmd('ip addr add 2.2.2.2/32 dev lo')
+    net['r3'].cmd('ip addr add 3.3.3.3/32 dev lo')
+    net['r4'].cmd('ip addr add 4.4.4.4/32 dev lo')
+    net['r5'].cmd('ip addr add 5.5.5.5/32 dev lo')
+    net['r6'].cmd('ip addr add 6.6.6.6/32 dev lo')
+    
     # Start FRR per router after Mininet starts
     for node in ('r1', 'r2', 'r3', 'r4', 'r5', 'r6'):
-        info(net[node].cmd(f"/usr/lib/frr/frrinit.sh start '{node}'"))
+        info(net[node].cmd(
+        f"/usr/lib/frr/frrinit.sh start {node}"
+        #f"--config_dir=/etc/frr/{node}"
+    ))
 
     info("\nUseful checks:\n")
     info("  r1 vtysh -N r1 -c \"show ip ospf neighbor\"\n")
@@ -227,7 +245,9 @@ def run():
     CLI(net)
 
     for node in ('r1', 'r2', 'r3', 'r4', 'r5', 'r6'):
-        info(net[node].cmd(f"/usr/lib/frr/frrinit.sh stop '{node}'"))
+        info(net[node].cmd(
+        f"/usr/lib/frr/frrinit.sh stop {node}"
+    ))
 
     net.stop()
 

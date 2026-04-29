@@ -1,0 +1,3 @@
+Metric,p (Mann–Whitney),p (Welch t-test),Effect Size (r_rb),Interpretation
+Failure convergence,<0.0001,<0.0001,-1.0,Strong distributional separation
+Recovery convergence,<0.0001,<0.0001,-1.0,Strong distributional separation

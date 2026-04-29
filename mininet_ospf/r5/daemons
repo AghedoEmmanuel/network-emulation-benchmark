@@ -33,6 +33,7 @@ bfdd=no
 fabricd=no
 vrrpd=no
 pathd=no
+staticd=yes
 
 #
 # If this option is set the /etc/init.d/frr script automatically loads
@@ -77,7 +78,7 @@ pathd_options="  -A 127.0.0.1"
 # option here. It will only have an effect in /etc/frr/<somename>/daemons, and
 # you need to start FRR with "/usr/lib/frr/frrinit.sh start <somename>".
 #
-#watchfrr_options=""
+watchfrr_options="--netns"
 
 
 # configuration profile

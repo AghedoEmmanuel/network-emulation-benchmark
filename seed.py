@@ -87,35 +87,87 @@ seed_long = seed_long.dropna(subset=numeric_cols)
 # ROUTE-LEVEL SUMMARY TABLE
 # =========================
 
-seed_summary = (
+# =========================
+# RO
+# =========================
+
+# =========================
+# TABLE 1: BANDWIDTH SUMMARY
+# =========================
+
+seed_bandwidth_table = (
     seed_long
     .groupby("Nodes")
     .agg(
-        Avg_Bandwidth_Mbps=("bandwidth_mbps", "mean"),
-        Std_Bandwidth_Mbps=("bandwidth_mbps", "std"),
-
-        Avg_Throughput_Mbps=("throughput_mbps", "mean"),
-        Std_Throughput_Mbps=("throughput_mbps", "std"),
-
-        Avg_Retransmits=("retransmits", "mean"),
-
-        Avg_CPU_Percent=("cpu_percent", "mean"),
-        Max_CPU_Percent=("cpu_percent", "max"),
-
-        Avg_Memory_Percent=("memory_percent", "mean"),
-        Max_Memory_Percent=("memory_percent", "max"),
-
-        Avg_Power_W=("power_w", "mean"),
-
-        # note: this repeats per route because SEED energy is per iteration
-        Total_Energy_kWh=("energy_kwh", "sum")
+        Mean_Bandwidth_Mbps=("bandwidth_mbps", "mean"),
+        Median_Bandwidth_Mbps=("bandwidth_mbps", "median"),
+        Min_Bandwidth_Mbps=("bandwidth_mbps", "min"),
+        Max_Bandwidth_Mbps=("bandwidth_mbps", "max"),
+        Std_Bandwidth_Mbps=("bandwidth_mbps", "std")
     )
     .reset_index()
-    .round(2)
+    .round(3)
 )
 
-print("\nSEED IE Route-Level Summary")
-print(seed_summary)
+print("\nSEED IE Bandwidth Summary")
+print(seed_bandwidth_table)
+
+
+# =========================
+# TABLE 2: THROUGHPUT SUMMARY
+# =========================
+seed_throughput_table = (
+    seed_long
+    .groupby("Nodes")
+    .agg(
+        Mean_Throughput_Mbps=("throughput_mbps", "mean"),
+        Median_Throughput_Mbps=("throughput_mbps", "median"),
+        Min_Throughput_Mbps=("throughput_mbps", "min"),
+        Max_Throughput_Mbps=("throughput_mbps", "max"),
+        Std_Throughput_Mbps=("throughput_mbps", "std")
+    )
+    .reset_index()
+    .round(3)
+)
+
+print("\nSEED IE Throughput Summary")
+print(seed_throughput_table)
+
+
+# =========================
+# TABLE 3: RESOURCE OVERHEAD SUMMARY
+# =========================
+
+seed_resource_table = (
+    seed_long
+    .groupby("Nodes")
+    .agg(
+        Mean_CPU_Percent=("cpu_percent", "mean"),
+        Median_CPU_Percent=("cpu_percent", "median"),
+        Min_CPU_Percent=("cpu_percent", "min"),
+        Max_CPU_Percent=("cpu_percent", "max"),
+        Std_CPU_Percent=("cpu_percent", "std"),
+         Mean_Memory_Percent=("memory_percent", "mean"),
+        Median_Memory_Percent=("memory_percent", "median"),
+        Min_Memory_Percent=("memory_percent", "min"),
+        Max_Memory_Percent=("memory_percent", "max"),
+        Std_Memory_Percent=("memory_percent", "std")
+    )
+    .reset_index()
+    .round(3)
+)
+
+print("\nSEED IE Resource Overhead Summary")
+print(seed_resource_table)
+
+
+# =========================
+# OPTIONAL: SAVE ONLY THESE THREE TABLES
+# =========================
+
+seed_bandwidth_table.to_csv("./docs/tables/seed_ie_bandwidth_route_summary.csv", index=False)
+seed_throughput_table.to_csv("./docs/tables/seed_ie_throughput_route_summary.csv", index=False)
+seed_resource_table.to_csv("./docs/tables/seed_ie_resource_overhead_route_summary.csv", index=False)
 
 
 # =========================
@@ -123,23 +175,15 @@ print(seed_summary)
 # Better for dissertation energy reporting
 # =========================
 
-seed_energy_summary = pd.DataFrame([{
-    "Platform": "SEED IE",
-    "Avg_CPU_Percent": seed["cpu_total_busy_pct"].mean(),
-    "Max_CPU_Percent": seed["cpu_total_busy_pct"].max(),
-    "Avg_Memory_Percent": seed["mem_utilisation_pct"].mean(),
-    "Max_Memory_Percent": seed["mem_utilisation_pct"].max(),
-    "Avg_Power_W": seed["estimated_power_w"].mean(),
-    "Total_Energy_kWh": seed["estimated_energy_kwh"].sum()
-}]).round(6)
+# seed_energy_summary = pd.DataFrame([{
+#     "Platform": "SEED IE",
+#     "Avg_CPU_Percent": seed["cpu_total_busy_pct"].mean(),
+#     "Max_CPU_Percent": seed["cpu_total_busy_pct"].max(),
+#     "Avg_Memory_Percent": seed["mem_utilisation_pct"].mean(),
+#     "Max_Memory_Percent": seed["mem_utilisation_pct"].max(),
+#     "Avg_Power_W": seed["estimated_power_w"].mean(),
+#     "Total_Energy_kWh": seed["estimated_energy_kwh"].sum()
+# }]).round(6)
 
-print("\nSEED IE Platform-Level Energy Summary")
-print(seed_energy_summary)
-
-
-# =========================
-# OPTIONAL: SAVE TABLES
-# =========================
-
-#seed_summary.to_csv("./result/seed_ie/seed_ie_bandwidth_throughput_cpu_memory_route_summary.csv", index=False)
-#seed_energy_summary.to_csv("./result/seed_ie/seed_ie_energy_platform_summary.csv", index=False)
+# print("\nSEED IE Platform-Level Energy Summary")
+# print(seed_energy_summary)

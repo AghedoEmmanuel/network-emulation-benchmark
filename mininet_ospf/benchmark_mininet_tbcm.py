@@ -171,6 +171,8 @@ def run_iperf_raw(pair, duration):
 
 
 def main():
+    global EXEC_MODE
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--iterations", type=int, default=DEFAULT_ITERATIONS)
     parser.add_argument("--duration", type=int, default=IPERF_DURATION)
@@ -180,7 +182,6 @@ def main():
     parser.add_argument("--exec-mode", choices=["auto", "mnexec", "ipnetns"], default=EXEC_MODE)
     args = parser.parse_args()
 
-    global EXEC_MODE
     EXEC_MODE = args.exec_mode
 
     if not shutil.which("iperf3"):

@@ -1,0 +1,10 @@
+Route,Mininet n,SEED IE n,Mininet Mean (ms),SEED IE Mean (ms),p (Mann-Whitney U),p (Welch t-test),Effect Size (r_rb),Interpretation
+R1-R2,25000,5000,0.2366,0.6575,0.0,0.0,-0.7238,Strong separation
+R1-R3,25000,5000,0.3046,0.8313,0.0,0.0,-0.7235,Strong separation
+R1-R6,25000,5000,0.2315,0.6263,0.0,0.0,-0.7139,Strong separation
+R2-R5,25000,5000,0.3349,0.9054,0.0,0.0,-0.7226,Strong separation
+R3-R2,25000,5000,0.2303,0.5681,0.0,0.0,-0.7093,Strong separation
+R3-R6,25000,5000,0.3337,0.9793,0.0,0.0,-0.7165,Strong separation
+R4-R5,25000,5000,0.2426,0.627,0.0,0.0,-0.7119,Strong separation
+R4-R6,25000,5000,0.3142,0.7832,0.0,0.0,-0.7144,Strong separation
+R6-R1,25000,5000,0.2332,0.5938,0.0,0.0,-0.725,Strong separation
