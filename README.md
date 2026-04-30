@@ -1,279 +1,533 @@
-# Network Emulation Benchmark: SEED IE vs Mininet (SDN)
+# Network Emulation Benchmark: Mininet FRR/OSPF vs SEED Internet Emulator
 
 ## 1. Overview
 
-This project presents a **comparative evaluation of network emulation platforms** using a controlled experimental framework. The study investigates how different network paradigms—traditional routing and Software-Defined Networking (SDN)—perform under identical topological conditions.
+This repository contains the implementation, benchmarking scripts, result files, and supporting documentation for a Masters dissertation project comparing two network emulation environments:
 
-Two environments are implemented:
+- **Mininet using FRRouting (FRR) and OSPF**
+- **SEED Internet Emulator using OSPF-based routing**
 
-* **SEED Internet Emulator (SEED IE)** — traditional routing using OSPF
-* **Mininet + POX controller** — SDN-based forwarding using OpenFlow
+The project evaluates how both platforms perform under controlled experimental conditions using the same logical six-node ring topology. The aim is to compare emulator behaviour in terms of network performance, convergence behaviour, resource overhead, and inter-emulator communication.
 
-The goal is to analyse performance, scalability, and convergence behaviour across both approaches.
+The artefact includes:
+
+- topology implementation scripts
+- OSPF routing configuration
+- automated benchmarking scripts
+- raw CSV/JSON result files
+- comparison and analysis scripts
+- inter-emulator latency testing
+- supporting diagrams and documentation
+
+This repository supports the dissertation by providing a reproducible technical framework for collecting and analysing performance data from both emulation platforms.
 
 ---
 
 ## 2. Research Aim
 
-To evaluate and compare the performance of network emulation platforms under controlled experimental conditions.
+The aim of this project is to evaluate and compare the performance of Mininet and SEED Internet Emulator under controlled network emulation conditions using equivalent OSPF-based routing designs.
+
+The comparison focuses on the effect of emulator architecture on measured performance and resource usage.
 
 ---
 
 ## 3. Research Objectives
 
-* Design a **consistent 6-node ring topology** across both environments
-* Implement **traditional routing (OSPF)** in SEED IE
-* Implement **SDN forwarding logic** using a POX controller in Mininet
-* Develop an **automated benchmarking framework**
-* Measure and compare:
+The main objectives of the project are to:
 
-  * Latency
-  * Jitter
-  * Throughput
-  * Bandwidth
-  * Packet loss
-  * Convergence time (failure & recovery)
-  * CPU utilisation
-  * Memory utilisation
-* Analyse differences between routing paradigms
+- design a consistent six-node ring topology for both environments
+- implement OSPF-based routing in Mininet using FRRouting
+- implement OSPF-based routing in SEED Internet Emulator
+- develop automated Python benchmarking scripts
+- collect repeated performance measurements
+- export raw results to CSV and JSON
+- compare latency, throughput, bandwidth, packet loss, convergence, CPU usage, and memory usage
+- test inter-emulator communication between Mininet and SEED IE
+- provide a reproducible benchmarking artefact for academic evaluation
 
 ---
 
-## 4. System Architecture
+## 4. Repository Structure
 
-### 4.1 SEED IE (Traditional Routing)
-
-* Docker-based emulation
-* Single Autonomous System (AS100)
-* OSPF routing protocol
-* Router-based forwarding decisions
-
-### 4.2 Mininet + POX (SDN)
-
-* OpenFlow-based switches
-* Centralised POX controller
-* Proactive flow installation
-* Ring-aware shortest path forwarding
-
----
-
-## 5. Topology Design
-
-A **6-node ring topology** is used across both environments:
-
-R1 — R2 — R3 — R4 — R5 — R6
-|                                 |
-└─────────────── R6 ─────────────┘
-
-Characteristics:
-
-* Each node connected via point-to-point links
-* Single failure point introduced for convergence testing
-* Identical logical structure across platforms
-
----
-
-## 6. Repository Structure
-
-```
+```text
 network-emulation-benchmark/
-│
-├── seed_ie/
-│   ├── SEED_Ring.py
-│   └── benchmark_ospf.py
-│
-├── mininet/
-│   ├── mininet_pox_topology.py
-│   ├── ring_controller.py
-│   └── benchmark_mininet_iterative.py
-│
-├── results/
-│   ├── seed_ie/
-│   └── mininet/
 │
 ├── docs/
 │   └── diagrams/
+│   └── figures/
+│   └── tables/
 │
+├── hybrid_system_comparison/
+│   └── inter-emulator testing files
+│
+├── mininet_ospf/
+│   └── Mininet topology, FRR/OSPF configuration, and benchmark scripts
+│
+├── mininet_ospf_hybrid/
+│   └── Mininet files used for hybrid/inter-emulator testing
+│
+├── result/
+│   └── raw and processed benchmark result files
+│
+├── seed_ie/
+│   └── SEED IE topology, SEED IE hybrid topology, OSPF setup, and benchmark scripts
+│
+├── comparison.py
+├── convergence_comparison.py
+├── final_comparison_script.py
+├── inter_latency.py
+├── latency_table.py
+├── mininet.py
+├── seed.py
 └── README.md
+````
+
+---
+
+## 5. Platform Descriptions
+
+### 5.1 Mininet with FRR/OSPF
+
+Mininet is used to create a lightweight emulated network using Linux-based virtual networking. In this project, Mininet is configured to behave as a routed network rather than only an SDN switching environment.
+
+The Mininet implementation uses:
+
+* Linux network namespaces
+* virtual Ethernet links
+* router-style nodes
+* FRRouting (FRR)
+* OSPF dynamic routing
+* Python-based topology creation
+* automated benchmark scripts
+
+FRR provides the OSPF routing functionality inside the Mininet environment. Each router advertises its connected networks, forms OSPF relationships where appropriate, and dynamically learns routes through the topology.
+
+This allows the Mininet environment to be compared more fairly against SEED IE because both platforms use OSPF-based routing.
+
+### 5.2 SEED Internet Emulator with OSPF
+
+SEED Internet Emulator is a Docker-based network emulation platform. It allows routers, networks, and larger Internet-style environments to be created programmatically.
+
+The SEED IE implementation uses:
+
+* Docker containers
+* Python-based topology creation
+* router-based network design
+* OSPF dynamic routing
+* automated benchmark scripts
+* CSV/JSON result output
+
+In this project, SEED IE is configured using the same logical six-node ring topology as Mininet. OSPF is used so that routers can exchange routing information and forward packets dynamically.
+
+---
+
+## 6. Topology Design
+
+The benchmark uses a six-node ring topology.
+
+```text
+        R1 ---- R2
+       /        |
+      /         |
+     R6        R3
+      \         |
+       \        |
+        R5 ---- R4
 ```
 
----
+The topology is designed to support both short-path and longer-path testing. This makes it possible to observe whether performance changes across different route distances.
 
-## 7. Metrics and Definitions
+Example test pairs include:
 
-All metrics are implemented using consistent operational definitions.
+| Nodes | Hop Count |
+| ----- | --------: |
+| R1-R2 |         1 |
+| R1-R3 |         2 |
+| R3-R2 |         1 |
+| R3-R6 |         2 |
+| R1-R6 |         1 |
+| R2-R5 |         2 |
+| R4-R5 |         1 |
+| R4-R6 |         2 |
+| R6-R1 |         1 |
 
-### Latency
-
-Measured using ICMP ping round-trip time (RTT).
-
-### Jitter
-
-Calculated as:
-
-* Mean absolute deviation of RTT samples from the average RTT
-* Provides a stable variation measure compared to standard deviation
-
-### Throughput
-
-Receiver-side TCP rate using iperf3.
-
-### Bandwidth
-
-Sender-side TCP rate using iperf3.
-
-### Packet Loss
-
-Percentage of lost ICMP packets.
-
-### Convergence Time
-
-Time taken for the network to recover after:
-
-* Link failure (failure convergence)
-* Link restoration (recovery convergence)
-
-Measured using continuous probing.
-
-### CPU Utilisation
-
-Measured via Docker (SEED IE) and system monitoring (Mininet), averaged across samples.
-
-### Memory Utilisation
-
-Measured per node and aggregated across the network.
+The same logical topology is used across both platforms to improve fairness and repeatability.
 
 ---
 
-## 8. Methodology
+## 7. Metrics Collected
 
-### Phase 1: Steady-State Benchmarking
+The benchmark scripts collect the following metrics.
 
-* 1000 iterations
-* Measures performance under normal operation
-
-### Phase 2: Convergence Testing
-
-* ~30 iterations
-* Simulates link failure and recovery
-* Measures routing adaptation time
-
-### Data Collection
-
-* Results stored in CSV and JSON format
-* Each iteration logged independently
-* Supports statistical analysis
+| Metric                 | Description                                                        | Unit |
+| ---------------------- | ------------------------------------------------------------------ | ---- |
+| Latency                | Round-trip delay between source and destination                    | ms   |
+| Jitter                 | Variation in latency between repeated packets                      | ms   |
+| Throughput             | Actual data transfer rate achieved during testing                  | Mbps |
+| Bandwidth              | Measured transfer capacity of the path                             | Mbps |
+| Packet Loss            | Percentage of packets lost during testing                          | %    |
+| Convergence Time       | Time taken for the network to recover after failure or restoration | ms   |
+| CPU Utilisation        | Processing overhead placed on the host system                      | %    |
+| Memory Utilisation     | Memory overhead during the benchmark                               | %    |
+| Inter-Emulator Latency | Latency between Mininet and SEED IE environments                   | ms   |
 
 ---
 
-## 9. Implementation Details
+## 8. Benchmarking Methodology
 
-### SEED IE
+The benchmarking process is automated using Python scripts to improve repeatability and reduce manual testing errors.
 
-* Networks configured using Python API
-* OSPF automatically computes routing paths
-* Docker containers simulate routers
+The general process is:
 
-### Mininet
+1. Build the six-node topology.
+2. Configure interfaces and IP addressing.
+3. Start OSPF routing.
+4. Confirm reachability between routers.
+5. Run repeated benchmark tests.
+6. Store raw per-iteration results.
+7. Export results to CSV and/or JSON.
+8. Generate descriptive statistics.
+9. Compare Mininet and SEED IE results.
+10. Analyse the performance and resource overhead differences.
 
-* Custom topology script creates ring network
-* POX controller installs forwarding rules
-* Shortest path determined using ring logic
+The project uses repeated measurements so that results can be analysed using summary statistics such as:
+
+* minimum
+* maximum
+* mean
+* median
+* standard deviation
+
+Where required, the raw result files can also be used for further statistical testing.
 
 ---
 
-## 10. Key Design Decisions
+## 9. Main Benchmark Categories
 
-### Subnet Configuration
-Both SEED IE and Mininet environments utilise /24 subnet addressing for consistency.
+### 9.1 Latency Testing
 
-In SEED IE, each point-to-point link is assigned a separate /24 subnet to emulate router-based network segmentation.
+Latency is measured using ICMP ping round-trip time.
 
-In Mininet, IP addressing operates within a logically flat SDN environment, where forwarding decisions are handled by the controller rather than traditional routing protocols. As a result, subnet boundaries do not influence forwarding behaviour in the same way as in SEED IE.
+The benchmark records individual RTT values for each tested route and stores them for later analysis.
 
-### Separate Convergence Testing
+### 9.2 Jitter Testing
 
-* Prevents distortion of steady-state metrics
-* Improves experimental validity
+Jitter is calculated from variation in latency values across repeated samples.
 
-### Iterative Benchmarking
+Lower jitter indicates more stable packet delay behaviour.
 
-* Large sample size improves statistical reliability
-* Aligns with experimental research standards
+### 9.3 Throughput and Bandwidth Testing
+
+Throughput and bandwidth testing is performed using traffic generation tools such as `iperf3`.
+
+The results are used to compare the actual data transfer behaviour of both emulators.
+
+### 9.4 Packet Loss Testing
+
+Packet loss is measured during connectivity and performance testing.
+
+This helps identify whether packets are being dropped during communication.
+
+### 9.5 Convergence Testing
+
+Convergence testing measures how quickly the network reacts to changes such as link failure and recovery.
+
+The project records:
+
+* failure convergence time
+* recovery convergence time
+
+This is used to compare how each emulated environment responds to routing changes.
+
+### 9.6 CPU and Memory Overhead
+
+CPU and memory measurements are collected to compare the resource cost of running each emulator.
+
+This is important because an emulator may perform well in terms of network metrics but still place a heavy load on the host system.
+
+### 9.7 Inter-Emulator Latency Testing
+
+The project also includes inter-emulator testing between Mininet and SEED IE.
+
+This checks whether the two emulated environments can communicate successfully when connected together.
+
+The inter-emulator tests measure latency between Mininet routers and SEED IE routers/gateway nodes.
+
+---
+
+## 10. Result Files
+
+The `result/` folder contains raw and processed output files from the benchmark experiments.
+
+Typical result files include:
+
+```text
+mininet_raw_latency_time_results.csv
+seed_ie_raw_latency_time_results.csv
+mininet_throughput_bandwidth_cpu_memory_raw.csv
+seed_ie_throughput_bandwidth_cpu_memory_raw.csv
+ospf_benchmark_results_iterative_ms.csv
+ospf_benchmark_results_iterative_ms_convergence.csv
+sdn_benchmark_results_iterative_ms.csv
+inter_emulator_latency_summary.csv
+```
+
+These files support:
+
+* descriptive statistics
+* comparison tables
+* dissertation figures
+* statistical analysis
+* reproducibility checks
 
 ---
 
 ## 11. How to Run
 
-### SEED IE
+> Note: Some scripts require root privileges because network namespaces, virtual interfaces, routing services, and Mininet topology creation require administrative access.
+
+### 11.1 Clone the Repository
 
 ```bash
-python3 seed_ie/SEED_Ring.py
-python3 seed_ie/benchmark_ospf.py
+git clone https://github.com/AghedoEmmanuel/network-emulation-benchmark.git
+cd 
+network-emulation-benchmark
 ```
+
+### 11.2 Install Common Dependencies
+
+```bash
+sudo apt update
+sudo apt install -y python3 python3-pip iputils-ping iperf3 docker.io docker-compose
+sudo systemctl enable docker
+sudo systemctl start docker
+```
+
+### 11.3 Run the Mininet OSPF Environment
+
+Clone Mininet:
+
+```bash
+git clone https://github.com/mininet/mininet.git
+cd mininet
+```
+
+Move the Mininet OSPF and Mininet OSPF hybrid folder into the mininet folder:
+
+```bash
+mv [source_folder] [destination_folder]
+```
+
+Replace `[source_folder]` with the actual destination of the mininet OSPF folder.
+Replace `[destination_folder]` with the actual destination of the mininet folder.
+
+Move into the Mininet OSPF folder:
+
+```bash
+cd mininet/mininet_ospf or cd mininet/mininet_ospf_hybrid
+```
+Install Mininet Dependencies:
+
+```bash
+sudo util/install.sh -n
+```
+
+Run the Mininet topology script:
+
+```bash
+sudo python3 mn_topo.py
+```
+
+Confirm that the FRR configuration files are in the expected location before running the benchmark.
+
+### 11.4 Run Comparison Scripts
+
+From the project root:
+
+```bash
+sudo python3 newbenchmark_mininet.py
+sudo python3 benchmark_mininet_tbcm.py
+```
+
+### 11.5 Run the SEED IE Environment
+
+Clone SEED IE:
+
+```bash
+git clone https://github.com/seed-labs/seed-emulator.git
+cd seed-emulator
+```
+
+Move the seed_ie folder into the seed-emulator examples  folder:
+
+```bash
+mv [source_folder] [destination_folder]
+```
+
+Replace `[source_folder]` with the actual destination of the seed_ie folder.
+Replace `[destination_folder]` with the actual destination of the seed-emulator/examples folder.
+SEED IE will not work if try to run it from anywhere else but the examples folder.
+
+Move into the SEED IE folder:
+
+```bash
+cd seed-emulator
+```
+
+Install a Python Virtual Environment:
+
+```bash
+sudo python3 -m venv venv
+```
+
+Install your requirements inside the virtual environment:
+
+```bash
+source venv/bin/activate
+pip install -r requirements.txt
+source development.env
+```
+
+Move into the seed_ie folder:
+
+```bash
+cd examples/seed_ie
+```
+
+Run the SEED IE topology script:
+
+```bash
+python3 SEED_Ring.py
+and for the hybrid layout
+python3 SEED_ring_hybrid.py
+```
+
+This will produce an output folder.
+
+Move into the output folder:
+
+```bash
+cd output
+```
+Depending on the SEED setup, the generated Docker environment may then need to be built and started using Docker Compose.
+
+Example:
+
+```bash
+docker compose build
+docker compose up
+```
+
+### 11.6 Run Comparison Scripts
+
+From the project root:
+
+```bash
+python3 newbenchmark_seed.py
+python3 benchmark_seed_tbcm.py
+```
+
+### 11.7 Run Inter-Emulator Latency Testing
+
+From the project root:
+
+```bash
+python3 inter_latency.py
+```
+
+This script is used to test latency between Mininet and SEED IE when both environments are connected for hybrid/inter-emulator testing.
 
 ---
 
-### Mininet + POX
+## 12. Key Findings
 
-Start controller:
+The experiments show that both Mininet and SEED IE can be used for repeatable network emulation benchmarking, but they show different performance and resource usage patterns.
 
-```bash
-cd ~/pox
-python3 pox.py log.level --DEBUG openflow.of_01 ring_controller
-```
+Key findings include:
 
-Start topology:
+* SEED IE generally showed very low CPU overhead.
+* SEED IE often produced more stable resource usage.
+* Mininet achieved strong throughput and bandwidth values on several tested paths.
+* Mininet showed higher variation in some throughput and bandwidth tests.
+* SEED IE had a slightly higher but more stable memory footprint.
+* Inter-emulator testing confirmed that Mininet and SEED IE could communicate successfully in the combined test environment.
+* Occasional outliers were observed in some routes, which is expected in virtualised/emulated environments.
 
-```bash
-sudo python3 mininet/mininet_pox_topology.py
-```
-
-Run benchmark:
-
-```bash
-python3 mininet/benchmark_mininet_iterative.py
-```
+These findings suggest that emulator architecture has a measurable effect on performance, stability, and resource overhead.
 
 ---
 
-## 12. Expected Outputs
+## 13. Artefact Contribution
 
-* CSV files containing iteration results
-* JSON files for convergence analysis
-* Logs for debugging and validation
+This repository provides a technical artefact for the dissertation project.
+
+The contribution of the artefact is that it provides:
+
+* an equivalent OSPF-based topology across two emulation platforms
+* automated benchmark scripts
+* raw experimental datasets
+* comparison-ready result outputs
+* inter-emulator testing scripts
+* evidence for evaluating emulator performance and resource overhead
+
+The artefact is intended to support reproducibility and allow the results discussed in the dissertation to be traced back to the scripts and data used during testing.
 
 ---
 
-## 13. Limitations
+## 14. Limitations
 
-* Mininet uses SDN (not router-based), so comparison is architectural
-* Docker networking may introduce overhead
-* Some iterations may experience timeouts due to emulation constraints
+The results should be interpreted as emulator performance results, not physical network performance results.
 
----
+Main limitations include:
 
-## 14. Contribution
-
-This project provides:
-
-* A **reproducible benchmarking framework**
-* A **direct comparison of SDN vs traditional routing**
-* Automated performance evaluation tools
-* A structured dataset for further analysis
+* Results may vary depending on host machine specifications.
+* VirtualBox, Docker, Mininet, Linux kernel behaviour, and background load can affect measurements.
+* The comparison is based on a six-node ring topology.
+* The results may not generalise to very large or production-scale networks.
+* Some values may include temporary spikes caused by host scheduling or emulator overhead.
+* The experiments were carried out in a controlled lab environment rather than a live production network.
 
 ---
 
 ## 15. Future Work
 
-* Extend to additional emulators (e.g., EVE-NG)
-* Introduce traffic variability
-* Add security performance evaluation
-* Apply machine learning for anomaly detection
+Possible future extensions include:
+
+* testing larger topologies
+* adding EVE-NG or GNS3 as additional comparison platforms
+* testing more routing protocols
+* adding automated graph generation
+* developing a dashboard for results
+* repeating the experiment across different host machines
+* adding security attack simulations
+* comparing OSPF routing with SDN forwarding as a separate experiment
+* improving automation for full setup and teardown
 
 ---
 
-## 16. Author
+## 16. Academic Context
 
-MSc Computing Project – Teesside University
-EMMANUEL ODIANOSE AGHEDO
+This repository supports a Masters dissertation project at Teesside University.
+
+The project investigates network emulation performance using controlled benchmarking, automated data collection, and comparative analysis.
+
+---
+
+## 17. Author
+
+**Emmanuel Odianose Aghedo**
+MSc Computing Project
+Teesside University
+
+---
+
+## 18. Disclaimer
+
+This project is intended for academic and controlled lab use only.
+
+The scripts should not be run on production networks or third-party systems without permission.
+
+````
+
+
+
