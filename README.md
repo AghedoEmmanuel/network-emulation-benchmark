@@ -5,7 +5,7 @@
 This repository contains the implementation, benchmarking scripts, result files, and supporting documentation for a Masters dissertation project comparing two network emulation environments:
 
 - **Mininet using FRRouting (FRR) and OSPF**
-- **SEED Internet Emulator using OSPF-based routing**
+- **SEED Internet Emulator using BIRD OSPF-based routing**
 
 The project evaluates how both platforms perform under controlled experimental conditions using the same logical six-node ring topology. The aim is to compare emulator behaviour in terms of network performance, convergence behaviour, resource overhead, and inter-emulator communication.
 
@@ -37,7 +37,7 @@ The main objectives of the project are to:
 
 - design a consistent six-node ring topology for both environments
 - implement OSPF-based routing in Mininet using FRRouting
-- implement OSPF-based routing in SEED Internet Emulator
+- implement OSPF-based routing in SEED Internet Emulator using BIRD
 - develop automated Python benchmarking scripts
 - collect repeated performance measurements
 - export raw results to CSV and JSON
@@ -268,7 +268,6 @@ mininet_throughput_bandwidth_cpu_memory_raw.csv
 seed_ie_throughput_bandwidth_cpu_memory_raw.csv
 ospf_benchmark_results_iterative_ms.csv
 ospf_benchmark_results_iterative_ms_convergence.csv
-sdn_benchmark_results_iterative_ms.csv
 inter_emulator_latency_summary.csv
 ```
 
@@ -331,6 +330,16 @@ Install Mininet Dependencies:
 ```bash
 sudo util/install.sh -n
 ```
+Make config_frr.sh executable:
+
+```bash
+chmod +x config_frr.sh
+```
+Run config_frr.sh:
+
+```bash
+sudo ./config_frr.sh
+```
 
 Run the Mininet topology script:
 
@@ -366,7 +375,7 @@ mv [source_folder] [destination_folder]
 
 Replace `[source_folder]` with the actual destination of the seed_ie folder.
 Replace `[destination_folder]` with the actual destination of the seed-emulator/examples folder.
-SEED IE will not work if try to run it from anywhere else but the examples folder.
+In this implementation, the SEED IE scripts should be run from the examples directory of the SEED Emulator installation.
 
 Move into the SEED IE folder:
 
