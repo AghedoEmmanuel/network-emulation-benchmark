@@ -436,15 +436,237 @@ python3 newbenchmark_seed.py
 python3 benchmark_seed_tbcm.py
 ```
 
-### 11.7 Run Inter-Emulator Latency Testing
+### 11.7 Hybrid Mininet–SEED IE Configuration
 
-From the project root:
 
-```bash
-python3 inter_latency.py
+This project includes a hybrid configuration that connects the Mininet FRR/OSPF topology to the SEED Internet Emulator topology. The purpose of this setup is to allow latency testing between the two emulation environments while still keeping routing behaviour controlled and reproducible.
+
+The hybrid connection is configured in three stages because creating a physical/logical link and advertising routes through OSPF are different tasks.
+
+### Hybrid route design
+
+The final hybrid setup uses the following address structure:
+
+```text
+Mininet network:        10.1.0.0/16
+SEED IE network:        10.0.0.0/16
+Hybrid bridge network:  172.16.100.0/30
+
+Mininet R1 bridge IP:   172.16.100.2
+SEED gateway bridge IP: 172.16.100.1
+SEED gateway internal:  10.0.200.253
+SR1 internal:           10.0.200.254
+````
+
+A `/16` route is used instead of a broader `/8` route to avoid unnecessary overlap across the private `10.x.x.x` address space. This keeps the Mininet and SEED IE networks separate and makes the benchmark environment more controlled.
+
+### Files used
+
+```text
+scripts/part1_setup_hybrid_link.sh
+scripts/part2_configure_mininet_r1_frr.sh
+scripts/part3_configure_sr1_bird.sh
+configs/sr1_bird_mininet_static.conf
 ```
 
-This script is used to test latency between Mininet and SEED IE when both environments are connected for hybrid/inter-emulator testing.
+### Part 1: Create the hybrid link
+
+File:
+
+```text
+scripts/part1_setup_hybrid_link.sh
+```
+
+This script creates the direct Linux veth link between Mininet R1 and the SEED gateway:
+
+```text
+Mininet R1 <-> SEED gateway <-> SR1
+```
+
+It creates the veth pair, assigns the bridge IP addresses, enables IPv4 forwarding, and adds the immediate Linux routes needed for R1, the SEED gateway, and SR1 to reach each other.
+
+Run:
+
+```bash
+sudo ./scripts/part1_setup_hybrid_link.sh <seed_gateway_container> <sr1_container>
+```
+
+Example:
+
+```bash
+sudo ./scripts/part1_setup_hybrid_link.sh 270e61e94928 1377af43db50
+```
+
+After this stage, connectivity is tested using ping between Mininet R1, the SEED gateway, and SR1.
+
+### Part 2: Advertise SEED routes inside Mininet
+
+File:
+
+```text
+scripts/part2_configure_mininet_r1_frr.sh
+```
+
+This script configures FRRouting on Mininet R1. R1 is given a static route to the SEED network and then redistributes that static route into OSPF.
+
+This means the other Mininet routers learn:
+
+```text
+To reach 10.0.0.0/16, forward traffic through R1.
+```
+
+Run:
+
+```bash
+sudo ./scripts/part2_configure_mininet_r1_frr.sh
+```
+
+This replaces the manual process of entering the R1 namespace and running `vtysh -N r1`.
+
+The equivalent FRR logic is:
+
+```text
+ip route 10.0.0.0/16 172.16.100.1
+router ospf
+ redistribute static
+```
+
+After this stage, other Mininet routers should be able to route towards SEED IE through R1.
+
+### Part 3: Advertise Mininet routes inside SEED IE
+
+Files:
+
+```text
+scripts/part3_configure_sr1_bird.sh
+configs/sr1_bird_mininet_static.conf
+```
+
+The `.conf` file contains the BIRD configuration snippet added to SR1:
+
+```bird
+protocol static mininet_static {
+    ipv4;
+
+    route 10.1.0.0/16 via 10.0.200.253;
+    route 172.16.100.0/30 via 10.0.200.253;
+}
+```
+
+Inside the existing BIRD OSPF section, static routes must be exported into OSPF:
+
+```bird
+ipv4 {
+    import all;
+    export where source = RTS_STATIC;
+};
+```
+
+The `.sh` script automates adding this configuration into SR1’s `/etc/bird/bird.conf` and reloads BIRD.
+
+Run:
+
+```bash
+sudo ./scripts/part3_configure_sr1_bird.sh <sr1_container>
+```
+
+Example:
+
+```bash
+sudo ./scripts/part3_configure_sr1_bird.sh 1377af43db50
+```
+
+This allows SEED routers to learn:
+
+```text
+To reach 10.1.0.0/16, forward traffic through SR1.
+```
+
+This avoids manually adding static return routes to every SEED router.
+
+### Why both `.conf` and `.sh` files are included for SR1
+
+The SR1 BIRD setup is provided in two forms:
+
+```text
+configs/sr1_bird_mininet_static.conf
+scripts/part3_configure_sr1_bird.sh
+```
+
+The `.conf` file shows the exact BIRD configuration that was added to SR1. It is included for transparency and manual reproduction.
+
+The `.sh` file automates the process of applying that configuration inside the SR1 container. It backs up `/etc/bird/bird.conf`, inserts the Mininet static route block, and reloads BIRD.
+
+This means the setup can be reproduced manually or automatically.
+
+### Recommended execution order
+
+Run the scripts in this order:
+
+```bash
+sudo ./scripts/part1_setup_hybrid_link.sh <seed_gateway_container> <sr1_container>
+sudo ./scripts/part2_configure_mininet_r1_frr.sh
+sudo ./scripts/part3_configure_sr1_bird.sh <sr1_container>
+```
+
+### Verification commands
+
+Check the Mininet route table:
+
+```bash
+sudo mnexec -a "$(pgrep -f 'mininet:r1' | head -n 1)" ip route
+```
+
+Ping the SEED gateway from Mininet R1:
+
+```bash
+sudo mnexec -a "$(pgrep -f 'mininet:r1' | head -n 1)" ping -c 4 172.16.100.1
+```
+
+Ping SR1 from Mininet R1:
+
+```bash
+sudo mnexec -a "$(pgrep -f 'mininet:r1' | head -n 1)" ping -c 4 10.0.200.254
+```
+
+Check that SR1 has the Mininet route in BIRD:
+
+```bash
+sudo docker exec -it <sr1_container> birdc show route | grep 10.1
+```
+
+Check that another SEED router has learned the Mininet route:
+
+```bash
+sudo docker exec -it <another_seed_router> birdc show route | grep 10.1
+```
+
+### Design explanation
+
+The hybrid setup is separated into three stages because direct connectivity and routing advertisement are not the same thing.
+
+The first stage creates the direct veth bridge between Mininet R1 and the SEED gateway. This proves that the two emulator environments can communicate at the boundary.
+
+The second stage configures Mininet R1 to advertise the SEED network into the Mininet OSPF domain. This allows other Mininet routers to learn that SEED IE is reachable through R1.
+
+The third stage configures BIRD on SEED SR1 to advertise the Mininet network into the SEED routing domain. This allows SEED routers to learn the return path dynamically.
+
+This design avoids manually configuring static routes on every router and produces a cleaner, more realistic routed hybrid network for inter-emulator latency testing.
+
+````
+
+Then in your main README file, add a small link to it if you want to keep the main README shorter:
+
+```markdown
+For the hybrid Mininet-SEED IE setup, see the section **Hybrid Mininet-SEED IE Configuration**.
+````
+
+Or, if you are using a separate file, add:
+
+```markdown
+Detailed hybrid setup instructions are available in [`docs/HYBRID_SETUP.md`](docs/HYBRID_SETUP.md).
+```
+
 
 ---
 
